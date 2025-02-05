@@ -14,19 +14,7 @@
     <loc>http://localhost:1313/writeups/angstromctf2024/</loc>
     <lastmod>2025-02-05T15:18:06+07:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/2024/</loc>
-    <lastmod>2025-02-05T15:16:21+07:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/tags/imaginary/</loc>
-    <lastmod>2025-02-05T15:16:21+07:00</lastmod>
-  </url><url>
     <loc>http://localhost:1313/writeups/imaginaryctf2024/</loc>
-    <lastmod>2025-02-05T15:16:21+07:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/tags/</loc>
-    <lastmod>2025-02-05T15:16:21+07:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/tags/writeup/</loc>
     <lastmod>2025-02-05T15:16:21+07:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/docs/</loc>
@@ -35,6 +23,8 @@
     <loc>http://localhost:1313/blogs/</loc>
   </url><url>
     <loc>http://localhost:1313/categories/</loc>
+  </url><url>
+    <loc>http://localhost:1313/tags/</loc>
   </url><url>
     <loc>http://localhost:1313/writeups/</loc>
   </url>
