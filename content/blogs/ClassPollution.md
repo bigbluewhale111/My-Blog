@@ -4,6 +4,7 @@ draft: false
 title: 'Intro to Class Pollution in Python'
 hideSummary: true
 type: "blogs"
+description: "Class Pollution in Python"
 ---
 ## TL;DR
 This blog is about a not new but very interesting vulnerability which is familiar to Prototype Pollution in Javascript but in Python.

@@ -4,6 +4,7 @@ draft: false
 title: 'ImaginaryCTF 2024'
 hideSummary: true
 type: "writeups"
+description: "Writeup for some web challenge for ImaginaryCTF 2024"
 ---
 ## TL;DR
 This is a writeup for some web challenge for ImaginaryCTF 2024
