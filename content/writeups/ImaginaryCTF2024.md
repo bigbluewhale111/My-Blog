@@ -1,7 +1,9 @@
 ---
 date: '2025-02-05T15:16:21+07:00'
 draft: false
-title: 'ImaginaryCTF2024'
+title: 'ImaginaryCTF 2024'
+tags: ["writeup", "imaginary", "2024"]
+hideSummary: true
 ---
 ## TL;DR
 This is a writeup for some web challenge for ImaginaryCTF 2024

@@ -1,7 +1,8 @@
 ---
 date: '2025-02-05T15:19:06+07:00'
 draft: false
-title: 'AmateursCTF2024'
+title: 'AmateursCTF 2024'
+hideSummary: true
 ---
 ## TL;DR
 This is a writeup for some web challenge for AmateursCTF 2024

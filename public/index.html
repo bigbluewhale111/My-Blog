@@ -100,56 +100,51 @@
             </div>
         </div>
         <ul id="menu">
+            <li>
+                <a href="http://localhost:1313/blogs/" title="Blog">
+                    <span>Blog</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/writeups/" title="Writeups">
+                    <span>Writeups</span>
+                </a>
+            </li>
         </ul>
     </nav>
 </header>
-<main class="main"> 
+<main class="main"><div class="profile">
+    <div class="profile_inner">
+            <img draggable="false" src="http://localhost:1313/avatar.png" alt="Avatar" title="Avatar"
+                height="120" width="120" />
+        <h1>This is bigbluewhale111 blog&rsquo;s</h1>
+        <span>There are some CTF writeups and some blogs of my research</span><div class="social-icons" >
+    <a href="https://github.com/bigbluewhale111" target="_blank" rel="noopener noreferrer me"
+        title="GitHub">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    stroke-linecap="round" stroke-linejoin="round">
+    <path
+        d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
+    </path>
+</svg>
+    </a>
+</div>
 
-<article class="first-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">AmateursCTF2024
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>TL;DR This is a writeup for some web challenge for AmateursCTF 2024
-Lahoot This is a very fun challenge, just for trolling. By dirsearch, we will find a hidden endpoint which is /docs. Wow, there is /api/question/{question_id}
-And the id is in the HTML itself, in the attribute data-id
-I plugged 1 question id in, and get this
-Finally, we can use python script to automate all of these.
-...</p>
-  </div>
-  <footer class="entry-footer"><span title='2025-02-05 15:19:06 +0700 +07'>February 5, 2025</span></footer>
-  <a class="entry-link" aria-label="post link to AmateursCTF2024" href="http://localhost:1313/writeups/amateursctf2024/"></a>
-</article>
+        <div class="buttons">
+            <a class="button" href="/writeups/" rel="noopener" title="Writeups">
+                <span class="button-inner">
+                    Writeups
+                </span>
+            </a>
+            <a class="button" href="/blogs/" rel="noopener" title="Blog">
+                <span class="button-inner">
+                    Blog
+                </span>
+            </a>
+        </div>
+    </div>
+</div>
 
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">AngstromCTF2024
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>TL;DR This is a writeup for some web challenge for AngstromCTF 2024
-Spinner const message = async () =&gt; { if (state.flagged) return const element = document.querySelector(&#39;.message&#39;) element.textContent = Math.floor(state.total / 360) if (state.total &gt;= 10_000 * 360) { state.flagged = true const response = await fetch(&#39;/falg&#39;, { method: &#39;POST&#39; }) element.textContent = await response.text() } } message() We can simply make POST request to /falg or using the console to assign the state.total to any number larger than stated above.
-Markdown There are no filtering or any encoding use while parsing the HTML, so this is a simple XSS.
-...</p>
-  </div>
-  <footer class="entry-footer"><span title='2025-02-05 15:18:06 +0700 +07'>February 5, 2025</span></footer>
-  <a class="entry-link" aria-label="post link to AngstromCTF2024" href="http://localhost:1313/writeups/angstromctf2024/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">ImaginaryCTF2024
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>TL;DR This is a writeup for some web challenge for ImaginaryCTF 2024
-Readme Well, simply read the Dockerfile and got the flag. That was the unintended way, the authentic way was bypass the $request_filename. So if we make request GET /flag.txt directly, nginx will recognize the $request_filename. So if we make request GET /flag.txt/., then nginx will treat this as a path and NodeJS will resolve the file and we will get the flag.
-...</p>
-  </div>
-  <footer class="entry-footer"><span title='2025-02-05 15:16:21 +0700 +07'>February 5, 2025</span></footer>
-  <a class="entry-link" aria-label="post link to ImaginaryCTF2024" href="http://localhost:1313/writeups/imaginaryctf2024/"></a>
-</article>
     </main>
     
 <footer class="footer">

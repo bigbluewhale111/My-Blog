@@ -2,3 +2,33 @@ baseURL: "https://blog.bigbluewhale111.me/"
 languageCode: en-us
 title: My New Hugo Site
 theme: PaperMod
+
+params:
+  ShowBreadCrumbs: true
+  ShowReadingTime: true
+  ShowToc: true
+  profileMode:
+    enabled: true
+    title: "This is bigbluewhale111 blog's"
+    subtitle: "There are some CTF writeups and some blogs of my research"
+    imageUrl: "avatar.png"
+    imageTitle: "Avatar"
+    imageWidth: 120
+    imageHeight: 120
+    buttons:
+      - name: Writeups
+        url: "/writeups/"
+      - name: Blog
+        url: "/blogs/"
+  socialIcons:
+    - name: "GitHub"
+      url: "https://github.com/bigbluewhale111"
+
+menu:
+  main:
+    - identifier: writeups
+      name: Writeups
+      url: /writeups/
+    - identifier: blogs
+      name: Blog
+      url: /blogs/
