@@ -1,0 +1,4 @@
+baseURL: "https://bigbluewhale111.github.io/my_blog/"
+languageCode: en-us
+title: My New Hugo Site
+theme: PaperMod
