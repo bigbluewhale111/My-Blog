@@ -5,9 +5,9 @@ title: 'Intro to Class Pollution in Python'
 hideSummary: true
 ---
 ## TL;DR
-This blog is about a not new but very interesting vulnerabilities which is familiar to Prototype Pollution in Javascript but in Python.
+This blog is about a not new but very interesting vulnerability which is familiar to Prototype Pollution in Javascript but in Python.
 ## Prototype Pollution
-"Prototype pollution is a JavaScript vulnerability that enables an attacker to add arbitrary properties to global object prototypes, which may then be inherited by user-defined objects." from (PortSwigger)[https://portswigger.net/web-security/prototype-pollution].
+"Prototype pollution is a JavaScript vulnerability that enables an attacker to add arbitrary properties to global object prototypes, which may then be inherited by user-defined objects." from [PortSwigger](https://portswigger.net/web-security/prototype-pollution).
 Prototype pollution itself doesn't often cause much of a trouble, but when chains with other vulnerabilities, it definitely will. As this research does not dig deep into prototype pollution, I will explain the exploit as this simple concept: In javascript, objects can inherit attributes (properties) from others via "Object Prototype".
 ```javascript
 let a = {test: "this is a test"};
@@ -36,8 +36,8 @@ var myObject = {};
 myObject.__proto__[username] = password;
 try_login(username, password) // return Logged in
 ```
-That is Prototype Pollution. There are more Prototype Pollution payloads, which help us achieve similar effect, and when this combines with the right gadget, we can exploit so much more, even (RCE)[https://mizu.re/post/ejs-server-side-prototype-pollution-gadgets-to-rce].
-To sum up, the vulnerability is that if we can control attributes of an object in javascript (inject things NOT initialized into it), we can do a Prototype Pollution. In real life, this vuln is found when we do insecure object recursive merge, property definition by path, or object clone, reference (this)[https://github.com/HoLyVieR/prototype-pollution-nsec18/blob/master/paper/JavaScript_prototype_pollution_attack_in_NodeJS.pdf].
+That is Prototype Pollution. There are more Prototype Pollution payloads, which help us achieve similar effect, and when this combines with the right gadget, we can exploit so much more, even [RCE](https://mizu.re/post/ejs-server-side-prototype-pollution-gadgets-to-rce).
+To sum up, the vulnerability is that if we can control attributes of an object in javascript (inject things NOT initialized into it), we can do a Prototype Pollution. In real life, this vuln is found when we do insecure object recursive merge, property definition by path, or object clone, reference [this](https://github.com/HoLyVieR/prototype-pollution-nsec18/blob/master/paper/JavaScript_prototype_pollution_attack_in_NodeJS.pdf).
 
 ## Class Pollution in Javascript
 ### Background
@@ -172,3 +172,5 @@ print(test.__init__.__globals__['__builtins__']['help'].__repr__.__globals__['sy
 Actually, you can see that I mentions module `__main__` in above payload which will returns the main file, or the running context. We can replace it with anything that is imported (you can check by `print(test.__init__.__globals__['__builtins__']['help'].__repr__.__globals__['sys'].modules)`).
 ## Conclusion
 As demonstrated, Class Pollution is an intriguing vulnerability and able to cause catastrophic result.
+## Reference
+https://blog.abdulrah33m.com/prototype-pollution-in-python/

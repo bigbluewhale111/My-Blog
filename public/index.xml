@@ -6,8 +6,19 @@
     <description>Recent content on My New Hugo Site</description>
     <generator>Hugo -- 0.143.1</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 05 Feb 2025 15:19:06 +0700</lastBuildDate>
+    <lastBuildDate>Wed, 05 Feb 2025 16:18:54 +0700</lastBuildDate>
     <atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Intro to Class Pollution in Python</title>
+      <link>http://localhost:1313/blogs/classpollution/</link>
+      <pubDate>Wed, 05 Feb 2025 16:18:54 +0700</pubDate>
+      <guid>http://localhost:1313/blogs/classpollution/</guid>
+      <description>&lt;h2 id=&#34;tldr&#34;&gt;TL;DR&lt;/h2&gt;
+&lt;p&gt;This blog is about a not new but very interesting vulnerability which is familiar to Prototype Pollution in Javascript but in Python.&lt;/p&gt;
+&lt;h2 id=&#34;prototype-pollution&#34;&gt;Prototype Pollution&lt;/h2&gt;
+&lt;p&gt;&amp;ldquo;Prototype pollution is a JavaScript vulnerability that enables an attacker to add arbitrary properties to global object prototypes, which may then be inherited by user-defined objects.&amp;rdquo; from &lt;a href=&#34;https://portswigger.net/web-security/prototype-pollution&#34;&gt;PortSwigger&lt;/a&gt;.
+Prototype pollution itself doesn&amp;rsquo;t often cause much of a trouble, but when chains with other vulnerabilities, it definitely will. As this research does not dig deep into prototype pollution, I will explain the exploit as this simple concept: In javascript, objects can inherit attributes (properties) from others via &amp;ldquo;Object Prototype&amp;rdquo;.&lt;/p&gt;</description>
+    </item>
     <item>
       <title>AmateursCTF 2024</title>
       <link>http://localhost:1313/writeups/amateursctf2024/</link>
