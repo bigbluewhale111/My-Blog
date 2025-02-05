@@ -3,6 +3,7 @@ date: '2025-02-05T16:18:54+07:00'
 draft: false
 title: 'Intro to Class Pollution in Python'
 hideSummary: true
+type: "blogs"
 ---
 ## TL;DR
 This blog is about a not new but very interesting vulnerability which is familiar to Prototype Pollution in Javascript but in Python.

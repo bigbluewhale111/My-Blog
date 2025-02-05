@@ -3,6 +3,7 @@ date: '2025-02-05T15:18:06+07:00'
 draft: false
 title: 'AngstromCTF 2024'
 hideSummary: true
+type: "writeups"
 ---
 ## TL;DR
 This is a writeup for some web challenge for AngstromCTF 2024
