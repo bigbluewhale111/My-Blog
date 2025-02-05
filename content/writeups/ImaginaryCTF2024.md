@@ -10,7 +10,7 @@ Well, simply read the Dockerfile and got the flag.
 That was the unintended way, the authentic way was bypass the $request_filename. So if we make request GET /flag.txt directly, nginx will recognize the $request_filename. So if we make request GET /flag.txt/., then nginx will treat this as a path and NodeJS will resolve the file and we will get the flag.
 ## Journal
 As the description said: "there is no LFI in the app". So how can we read the flag? There is a way to RCE in PHP if assert not handled carefully.
-```php!
+```php
 assert("strpos('$file', '..') === false") or die("Invalid file!");
 ```
 In this case, a ```GET /?file=a%27,die(`cat+/flag*`));``` would give us the flag.
@@ -29,7 +29,7 @@ I think this chall was some sort of SSTI. After reading the document carefully, 
 ## Notactf
 I think this would be a crypto-ish chall. We need to be a admin to solve this. And the web app check us by verify the `user-auth-token`. And by tamper this token, we will be admin :smiley:.
 Because I was too lazy, so I though of tampering 1 character only. but really, any would work. The check only verify the decoded token without checking with the md5 hash. So I reversed the process of generating the token and tampered it.
-```python!
+```python
 from AesEverywhere import aes256
 from xorCryptPy import xorCrypt
 import hashlib

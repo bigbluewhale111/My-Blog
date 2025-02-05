@@ -134,6 +134,7 @@ Finally, we can use python script to automate all of these.
   <div class="entry-content">
     <p>TL;DR This is a writeup for some web challenge for AngstromCTF 2024
 Spinner const message = async () =&gt; { if (state.flagged) return const element = document.querySelector(&#39;.message&#39;) element.textContent = Math.floor(state.total / 360) if (state.total &gt;= 10_000 * 360) { state.flagged = true const response = await fetch(&#39;/falg&#39;, { method: &#39;POST&#39; }) element.textContent = await response.text() } } message() We can simply make POST request to /falg or using the console to assign the state.total to any number larger than stated above.
+Markdown There are no filtering or any encoding use while parsing the HTML, so this is a simple XSS.
 ...</p>
   </div>
   <footer class="entry-footer"><span title='2025-02-05 15:18:06 +0700 +07'>February 5, 2025</span></footer>

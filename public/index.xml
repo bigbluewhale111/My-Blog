@@ -18,12 +18,12 @@
 &lt;h2 id=&#34;lahoot&#34;&gt;Lahoot&lt;/h2&gt;
 &lt;p&gt;This is a very fun challenge, just for trolling.
 By dirsearch, we will find a hidden endpoint which is /docs.
-&lt;img alt=&#34;gay2&#34; loading=&#34;lazy&#34; src=&#34;https://hackmd.io/_uploads/BkXdN9vl0.png&#34;&gt;&lt;/p&gt;
+&lt;img alt=&#34;img1&#34; loading=&#34;lazy&#34; src=&#34;http://localhost:1313/writeups/AmateursCTF2024/image1.png&#34;&gt;&lt;/p&gt;
 &lt;p&gt;Wow, there is /api/question/{question_id}&lt;/p&gt;
 &lt;p&gt;And the id is in the HTML itself, in the attribute data-id&lt;/p&gt;
-&lt;p&gt;&lt;img alt=&#34;gay6&#34; loading=&#34;lazy&#34; src=&#34;https://hackmd.io/_uploads/r1PuHcPxR.png&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&#34;img2&#34; loading=&#34;lazy&#34; src=&#34;http://localhost:1313/writeups/AmateursCTF2024/image2.png&#34;&gt;&lt;/p&gt;
 &lt;p&gt;I plugged 1 question id in, and get this&lt;/p&gt;
-&lt;p&gt;&lt;img alt=&#34;gay4&#34; loading=&#34;lazy&#34; src=&#34;https://hackmd.io/_uploads/rkH-H9wl0.png&#34;&gt;
+&lt;p&gt;&lt;img alt=&#34;img3&#34; loading=&#34;lazy&#34; src=&#34;http://localhost:1313/writeups/AmateursCTF2024/image3.png&#34;&gt;
 Finally, we can use python script to automate all of these.&lt;/p&gt;</description>
     </item>
     <item>
@@ -34,18 +34,20 @@ Finally, we can use python script to automate all of these.&lt;/p&gt;</descripti
       <description>&lt;h2 id=&#34;tldr&#34;&gt;TL;DR&lt;/h2&gt;
 &lt;p&gt;This is a writeup for some web challenge for AngstromCTF 2024&lt;/p&gt;
 &lt;h2 id=&#34;spinner&#34;&gt;Spinner&lt;/h2&gt;
-&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-javascript=&#34; data-lang=&#34;javascript=&#34;&gt;const message = async () =&amp;gt; {
-    if (state.flagged) return
-    const element = document.querySelector(&amp;#39;.message&amp;#39;)
-    element.textContent = Math.floor(state.total / 360)
-    if (state.total &amp;gt;= 10_000 * 360) {
-        state.flagged = true
-        const response = await fetch(&amp;#39;/falg&amp;#39;, { method: &amp;#39;POST&amp;#39; })
-        element.textContent = await response.text()
-    }
-}
-message()
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;We can simply make POST request to /falg or using the console to assign the state.total to any number larger than stated above.&lt;/p&gt;</description>
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;message&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;async&lt;/span&gt; () =&amp;gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;state&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;flagged&lt;/span&gt;) &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;element&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; document.&lt;span style=&#34;color:#a6e22e&#34;&gt;querySelector&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;.message&amp;#39;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#a6e22e&#34;&gt;element&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;textContent&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; Math.&lt;span style=&#34;color:#a6e22e&#34;&gt;floor&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;state&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;total&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;/&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;360&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;state&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;total&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;10_000&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;360&lt;/span&gt;) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#a6e22e&#34;&gt;state&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;flagged&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;response&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;await&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;fetch&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;/falg&amp;#39;&lt;/span&gt;, { &lt;span style=&#34;color:#a6e22e&#34;&gt;method&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;POST&amp;#39;&lt;/span&gt; })
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#a6e22e&#34;&gt;element&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;textContent&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;await&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;response&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;text&lt;/span&gt;()
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;message&lt;/span&gt;()
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;We can simply make POST request to /falg or using the console to assign the state.total to any number larger than stated above.&lt;/p&gt;
+&lt;h2 id=&#34;markdown&#34;&gt;Markdown&lt;/h2&gt;
+&lt;p&gt;There are no filtering or any encoding use while parsing the HTML, so this is a simple XSS.&lt;/p&gt;</description>
     </item>
     <item>
       <title>ImaginaryCTF2024</title>
