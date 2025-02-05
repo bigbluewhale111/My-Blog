@@ -1,6 +1,6 @@
 ---
 date: '2025-02-05T15:16:21+07:00'
-draft: true
+draft: false
 title: 'ImaginaryCTF2024'
 ---
 ## TL;DR

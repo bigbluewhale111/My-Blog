@@ -8,17 +8,17 @@ This is a writeup for some web challenge for AmateursCTF 2024
 ## Lahoot
 This is a very fun challenge, just for trolling.
 By dirsearch, we will find a hidden endpoint which is /docs.
-![gay2](https://hackmd.io/_uploads/BkXdN9vl0.png)
+![img1](writeups/AmateursCTF2024/image1.png)
 
 Wow, there is /api/question/{question_id}
 
 And the id is in the HTML itself, in the attribute data-id
 
-![gay6](https://hackmd.io/_uploads/r1PuHcPxR.png)
+![img2](writeups/AmateursCTF2024/image2.png)
 
 I plugged 1 question id in, and get this
 
-![gay4](https://hackmd.io/_uploads/rkH-H9wl0.png)
+![img3](writeups/AmateursCTF2024/image3.png)
 Finally, we can use python script to automate all of these.
 
 ```python=
@@ -88,7 +88,7 @@ The function beeFn() must throw an error, and the error will be parsed directly 
 ```javascript=
 throw new Error("<b>Injected</b>");
 ```
-![gay1](https://hackmd.io/_uploads/B1X6WcPxA.png)
+![img4](writeups/AmateursCTF2024/image4.png)
 ### setHTML()
 Can we inject script tag? Sadly no, anything XSS will be filtered by setHTML(). Is this a dead end?
 ### Blob
