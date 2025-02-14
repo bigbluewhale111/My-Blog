@@ -1,6 +1,6 @@
 baseURL: "https://blog.bigbluewhale111.me/"
 languageCode: en-us
-title: My New Hugo Site
+title: bigbluewhale111's blog
 theme: PaperMod
 
 params:
