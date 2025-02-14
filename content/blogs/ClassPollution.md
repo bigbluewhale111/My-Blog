@@ -24,7 +24,7 @@ var password = "Evil";
 var users = {"admin": "REDACTED"}
 function try_login(username, password) {
     if (username in users && users[username] === password) {
-        console.log("logged in");
+        console.log("Logged in");
     } else {
         console.log("Not logged in");
     }
@@ -36,6 +36,28 @@ How can we log in? If we can modify the `Object.__proto__.Hacker = "Evil"`, then
 // continue with the above snippet
 var myObject = {};
 myObject.__proto__[username] = password;
+try_login(username, password) // return Logged in
+```
+This is a more realistic example:
+```javascript
+// continue with the above snippet
+function merge(target, source) {
+    for (let key in source) {
+        if (typeof source[key] === 'object' && source[key] !== null) {
+            if (!target[key]) {
+                target[key] = {};
+            }
+            merge(target[key], source[key]);
+        } else {
+            target[key] = source[key];
+        }
+    }
+}
+
+var theme = {background: "white", frontground: "black"}
+merge(theme, JSON.parse('{"__proto__": {"Hacker2": "Evil2"}}'));
+username = "Hacker2";
+password = "Evil2";
 try_login(username, password) // return Logged in
 ```
 That is Prototype Pollution. There are more Prototype Pollution payloads, which help us achieve similar effect, and when this combines with the right gadget, we can exploit so much more, even [RCE](https://mizu.re/post/ejs-server-side-prototype-pollution-gadgets-to-rce).
