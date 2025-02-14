@@ -138,7 +138,7 @@ print(smallTest.my_value) # tester from SmallTest
 So in that example snippet, we can execute arbitrary payload
 ```python
 # continue with above snippet
-test.__class__.__base__.__base__.my_value = "evil & whoami"
+test.__class__.__base__.__base__.my_value = "evil && whoami"
 mediumTest = MediumTest()
 mediumTest.health_check() # Try this yourself, I won't delete your system :)
 ```
