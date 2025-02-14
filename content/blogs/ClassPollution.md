@@ -226,7 +226,7 @@ Actually, you can see that I mentions module `__main__` in above payload which w
 ## Conclusion
 As demonstrated, Class Pollution is an intriguing vulnerability and able to cause catastrophic result.
 ## Reference
-https://portswigger.net/web-security/prototype-pollution
-https://mizu.re/post/ejs-server-side-prototype-pollution-gadgets-to-rce
-https://github.com/HoLyVieR/prototype-pollution-nsec18/blob/master/paper/JavaScript_prototype_pollution_attack_in_NodeJS.pdf
-https://blog.abdulrah33m.com/prototype-pollution-in-python/
+- https://portswigger.net/web-security/prototype-pollution
+- https://mizu.re/post/ejs-server-side-prototype-pollution-gadgets-to-rce
+- https://github.com/HoLyVieR/prototype-pollution-nsec18/blob/master/paper/JavaScript_prototype_pollution_attack_in_NodeJS.pdf
+- https://blog.abdulrah33m.com/prototype-pollution-in-python/
