@@ -33,6 +33,7 @@ This seemed to be safe and balance, but when u and r are the same user, given `u
 1. `u.ref = 0`
 2. `u.ref = A + A/2 = 1.5*A`
 3. `u.bal += 0.5*A`
+
 In this case, it seemed that `u.ref` is increase in exponential manner => reaching 100.000.000.000 is possible in a few iterations.
 But how to do so? Looking at `/new` endpoint, I noticed that it collected the body data in a weird manner:
 ```javascript
@@ -255,7 +256,7 @@ from flask_cors import CORS
 import sys
 
 app = Flask(__name__)
-CORS(app) # I have to set the CORS, otherwise the browser will not run the JavaScript code
+CORS(app) # I had to set the CORS, otherwise the browser would not run the JavaScript code
 
 secret_data = ['']*100 # I first forgot how long the secret be :)
 
