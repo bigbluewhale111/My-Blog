@@ -1,24 +1,24 @@
 <!DOCTYPE html>
-<html lang="en" dir="auto">
+<html lang="en" dir="auto" data-theme="auto">
 
-<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<head><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="noindex, nofollow">
-<title>ImaginaryCTF 2024 | My New Hugo Site</title>
+<meta name="robots" content="index, follow">
+<title>ImaginaryCTF 2024 | bigbluewhale111&#39;s blog</title>
 <meta name="keywords" content="">
 <meta name="description" content="Writeup for some web challenge for ImaginaryCTF 2024">
 <meta name="author" content="">
-<link rel="canonical" href="http://localhost:1313/writeups/imaginaryctf2024/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.9de45e225101e4f99701d2b68fc6b8a1ef6027928be6391fa15bf7f56326c909.css" integrity="sha256-neReIlEB5PmXAdK2j8a4oe9gJ5KL5jkfoVv39WMmyQk=" rel="preload stylesheet" as="style">
-<link rel="icon" href="http://localhost:1313/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
-<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
-<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<link rel="canonical" href="https://blog.bigbluewhale111.me/writeups/imaginaryctf2024/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.fd5566c526ae48aadabd950798a2dc3568536401560eae5caac3765a42a9e7b5.css" integrity="sha256-/VVmxSauSKravZUHmKLcNWhTZAFWDq5cqsN2WkKp57U=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://blog.bigbluewhale111.me/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://blog.bigbluewhale111.me/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://blog.bigbluewhale111.me/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://blog.bigbluewhale111.me/apple-touch-icon.png">
+<link rel="mask-icon" href="https://blog.bigbluewhale111.me/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="http://localhost:1313/writeups/imaginaryctf2024/">
+<link rel="alternate" hreflang="en" href="https://blog.bigbluewhale111.me/writeups/imaginaryctf2024/">
 <noscript>
     <style>
         #theme-toggle,
@@ -39,43 +39,102 @@
                 --code-block-bg: rgb(46, 46, 51);
                 --code-bg: rgb(55, 56, 62);
                 --border: rgb(51, 51, 51);
+                color-scheme: dark;
             }
 
             .list {
                 background: var(--theme);
             }
 
-            .list:not(.dark)::-webkit-scrollbar-track {
-                background: 0 0;
+            .toc {
+                background: var(--entry);
             }
+        }
 
-            .list:not(.dark)::-webkit-scrollbar-thumb {
-                border-color: var(--theme);
+        @media (prefers-color-scheme: light) {
+            .list::-webkit-scrollbar-thumb {
+                border-color: var(--code-bg);
             }
         }
 
     </style>
 </noscript>
-</head>
-
-<body class="" id="top">
 <script>
     if (localStorage.getItem("pref-theme") === "dark") {
-        document.body.classList.add('dark');
+        document.querySelector("html").dataset.theme = 'dark';
     } else if (localStorage.getItem("pref-theme") === "light") {
-        document.body.classList.remove('dark')
+       document.querySelector("html").dataset.theme = 'light';
     } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        document.body.classList.add('dark');
+        document.querySelector("html").dataset.theme = 'dark';
+    } else {
+        document.querySelector("html").dataset.theme = 'light';
     }
 
-</script>
+</script><meta property="og:url" content="https://blog.bigbluewhale111.me/writeups/imaginaryctf2024/">
+  <meta property="og:site_name" content="bigbluewhale111&#39;s blog">
+  <meta property="og:title" content="ImaginaryCTF 2024">
+  <meta property="og:description" content="Writeup for some web challenge for ImaginaryCTF 2024">
+  <meta property="og:locale" content="en-us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="writeups">
+    <meta property="article:published_time" content="2025-02-05T15:16:21+07:00">
+    <meta property="article:modified_time" content="2025-02-05T15:16:21+07:00">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ImaginaryCTF 2024">
+<meta name="twitter:description" content="Writeup for some web challenge for ImaginaryCTF 2024">
 
-<header class="header">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "ImaginaryCTF 2024",
+      "item": "https://blog.bigbluewhale111.me/writeups/imaginaryctf2024/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "ImaginaryCTF 2024",
+  "name": "ImaginaryCTF 2024",
+  "description": "Writeup for some web challenge for ImaginaryCTF 2024",
+  "keywords": [
+    
+  ],
+  "articleBody": "TL;DR This is a writeup for some web challenge for ImaginaryCTF 2024\nReadme Well, simply read the Dockerfile and got the flag. That was the unintended way, the authentic way was bypass the $request_filename. So if we make request GET /flag.txt directly, nginx will recognize the $request_filename. So if we make request GET /flag.txt/., then nginx will treat this as a path and NodeJS will resolve the file and we will get the flag.\nJournal As the description said: “there is no LFI in the app”. So how can we read the flag? There is a way to RCE in PHP if assert not handled carefully.\nassert(\"strpos('$file', '..') === false\") or die(\"Invalid file!\"); In this case, a GET /?file=a%27,die(`cat+/flag*`)); would give us the flag.\nP2C I was too lazy to think of any other ways to solve this challenge. I just used generated Python reverse shell.\nCrystals This was a fun one, while I was really confused about the challenge source, I just tested a payload GET/`ls` and got the flag.\nThe Amazing Race At first glance, I guessed this challenge would be a race condition one. The challenge check whether we can move if the wall is not next to the Player. So if we spam many request, we would be able to reach the goal. Let’s explain this idea. So if the first and second request were sent to the server at roughly same time, first request passed the movement check, but hadn’t moved yet, so the second request would pass the check also. So we can move through wall. I used Burpsuit Turbo Intruder to solve this.\nReadme2 Well this is a guessy one. While trying stupid payload I tried GET /\\\\0 and the debugging show that it tried resolving 0.0.0.0, then I tried GET //0 and get the same thing. So why? As I test out the URL('http://a.test/hehe', 'http://b.test'), this would not return http://b.test/http://a.test/hehe or anything like b.test host. It returned the host of the first parameter. So when I tried GET //0 the new URL(url.pathname + url.search, 'http://localhost:3000/') would return http://0.0.0.0 (because Javascript treat //something as http://something ). So this was a SSRF. I made an endpoint to redirect to http://localhost:3000/flag.txt and made request to my endpoint and get the flag. This was unintended though, the intended one was exploiting the fact that “Bun will put the value of Host header into req.url, which allows us to do many funny things to bypass the check.” - Original Writeup.\nPwning en Logique I think this chall was some sort of SSTI. After reading the document carefully, I saw that ~@ would execute the next argument and the output will be placed there. The downside is the next argument here was passed in as a string, which luckily can be treated as a predicate with no parameter. Inside the chall setup, there was print_flag predicate requiring no argument and gave us the flag. https://pwning-en-logique-fa381af47302e838.d.imaginaryctf.org:443/greet?format=~@~n~w\u0026greeting=print_flag would give us the flag.\nNotactf I think this would be a crypto-ish chall. We need to be a admin to solve this. And the web app check us by verify the user-auth-token. And by tamper this token, we will be admin :smiley:. Because I was too lazy, so I though of tampering 1 character only. but really, any would work. The check only verify the decoded token without checking with the md5 hash. So I reversed the process of generating the token and tampered it.\nfrom AesEverywhere import aes256 from xorCryptPy import xorCrypt import hashlib authtoken = \"f3a5839ef3a582b9f3a5838df3a583b8f3a583aff3a5838cf3a5839df3a583a0f3a58393f3a582baf3a582a0f3a583aaf3a58399f3a5839cf3a58382f3a58383f3a58386f3a583a2f3a583bbf3a583aff3a583a4f3a5839df3a58382f3a583a0f3a582a0f3a583a0f3a5839df3a5839cf3a583acf3a58389f3a582bdf3a5838cf3a582bbf3a583a8f3a583a0f3a582bbf3a583a4f3a582bef3a5839bf3a58392f3a58382f3a58398f3a582a4f3a583bbf3a583b2f3a583b8f3a58399f3a583a2f3a58399f3a58399f3a582bef3a583b8f3a582bef3a582bdf3a58388f3a583bbf3a583a4f3a58383f3a583bbf3a583a0f3a5838ff3a582b2f3a58384f3a582bdf3a582b8f3a58380f3a583a2f3a58386f3a5838cf3a5838ff3a58386f3a5838ff3a583a2f3a5838ef3a583baf3a5839cf3a5839df3a583a2f3a583bdf3a583bcf3a58383f3a58393f3a583b8f3a582bbf3a582b2f3a583bcf3a582b6f3a582b6\" from base64 import decodebytes, encodebytes auth_decode = bytes.fromhex(authtoken).decode(\"utf-8\") auth_decode = xorCrypt(auth_decode, 938123) print(auth_decode) auth_decode = decodebytes(auth_decode.encode()) # print(auth_decode) gay = auth_decode[:16] auth_decode = auth_decode[16:] # print(auth_decode) auth_decode = gay + auth_decode[:16] + (auth_decode[16]^ord('z')^ord('a')).to_bytes(1,'big') + auth_decode[17:] # print(auth_decode) auth_decode = encodebytes(auth_decode).decode(\"utf-8\") print(auth_decode) auth_decode = xorCrypt(auth_decode, 938123) auth_decode = str(auth_decode) auth_decode = auth_decode.encode(\"utf-8\").hex() print(auth_decode) A bit manual but well, it solved the challenge right :+1:.\n",
+  "wordCount" : "649",
+  "inLanguage": "en",
+  "datePublished": "2025-02-05T15:16:21+07:00",
+  "dateModified": "2025-02-05T15:16:21+07:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://blog.bigbluewhale111.me/writeups/imaginaryctf2024/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "bigbluewhale111's blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://blog.bigbluewhale111.me/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+<body id="top">
+    <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="http://localhost:1313/" accesskey="h" title="My New Hugo Site (Alt + H)">My New Hugo Site</a>
+            <a href="https://blog.bigbluewhale111.me/" accesskey="h" title="bigbluewhale111&#39;s blog (Alt + H)">bigbluewhale111&#39;s blog</a>
             <div class="logo-switches">
-                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                         stroke-linejoin="round">
@@ -99,12 +158,12 @@
         </div>
         <ul id="menu">
             <li>
-                <a href="http://localhost:1313/blogs/" title="Blogs">
+                <a href="https://blog.bigbluewhale111.me/blogs/" title="Blogs">
                     <span>Blogs</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/writeups/" title="Writeups">
+                <a href="https://blog.bigbluewhale111.me/writeups/" title="Writeups">
                     <span>Writeups</span>
                 </a>
             </li>
@@ -115,14 +174,14 @@
 
 <article class="post-single">
   <header class="post-header">
-    <div class="breadcrumbs"><a href="http://localhost:1313/">Home</a></div>
+    <div class="breadcrumbs"><a href="https://blog.bigbluewhale111.me/">Home</a></div>
     <h1 class="post-title entry-hint-parent">
       ImaginaryCTF 2024
     </h1>
     <div class="post-description">
       Writeup for some web challenge for ImaginaryCTF 2024
     </div>
-    <div class="post-meta"><span title='2025-02-05 15:16:21 +0700 +07'>February 5, 2025</span>&nbsp;·&nbsp;4 min
+    <div class="post-meta"><span title='2025-02-05 15:16:21 +0700 +07'>February 5, 2025</span>&nbsp;·&nbsp;<span>4 min</span>
 
 </div>
   </header> <div class="toc">
@@ -215,7 +274,7 @@ Because I was too lazy, so I though of tampering 1 character only. but really, a
     </main>
     
 <footer class="footer">
-        <span>&copy; 2025 <a href="http://localhost:1313/">My New Hugo Site</a></span> · 
+        <span>&copy; 2025 <a href="https://blog.bigbluewhale111.me/">bigbluewhale111&#39;s blog</a></span> · 
 
     <span>
         Powered by
@@ -230,9 +289,14 @@ Because I was too lazy, so I though of tampering 1 character only. but really, a
 </a>
 
 <script>
-    let menu = document.getElementById('menu')
+    let menu = document.getElementById('menu');
     if (menu) {
-        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        
         menu.onscroll = function () {
             localStorage.setItem("menu-scroll-position", menu.scrollLeft);
         }
@@ -273,11 +337,12 @@ Because I was too lazy, so I though of tampering 1 character only. but really, a
 </script>
 <script>
     document.getElementById("theme-toggle").addEventListener("click", () => {
-        if (document.body.className.includes("dark")) {
-            document.body.classList.remove('dark');
+        const html = document.querySelector("html");
+        if (html.dataset.theme === "dark") {
+            html.dataset.theme = 'light';
             localStorage.setItem("pref-theme", 'light');
         } else {
-            document.body.classList.add('dark');
+            html.dataset.theme = 'dark';
             localStorage.setItem("pref-theme", 'dark');
         }
     })
