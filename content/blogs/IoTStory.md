@@ -104,9 +104,9 @@ All routing was done manually. I used 0.254 mm traces for general signal routing
 * Here is the completed schematic:
 ![Schematics](blogs/IoTStory/Schematics.png)
 * Here is the bare PCB manufactured by [JLCPCB](https://jlcpcb.com/) (I also used their PCBA service to pre-solder a few surface-mount parts):
-![PCB](blogs/IoTStory/PCB.jpg)
-* And here is the final assembled board after hand-soldering the remaining components:
 ![Board](blogs/IoTStory/Board.jpg)
+* And here is the final assembled board after hand-soldering the remaining components:
+![PCB](blogs/IoTStory/PCB.jpg)
 
 Flashing firmware onto EvilWhale works the exact same way as flashing a Raspberry Pi Pico (holding the BOOT button while plugging it into USB).
 
